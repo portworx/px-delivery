@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment                 
+metadata:
+  name: pxbbq-web  
+  namespace: pxbbq         
+spec:
+  replicas: 3                    
+  selector:
+    matchLabels:
+      app: pxbbq-web
+  template:                      
+    metadata:
+      labels:                    
+        app: pxbbq-web
+    spec:                        
+      containers:
+      - name: pxbbq-web
+        image: eshanks16/pxbbq:1
+        env:
+        - name: MONGO_HOST
+          value: "mongo"
+        - name: MONGO_PORT
+          value: "27017"
+        - name: MONGO_USER
+          value: porxie
+        - name: MONGO_PASS
+          value: "porxie"
+        - name: MONGO_TLS
+          value: ""
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080  
+        livenessProbe:           
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 5
+        readinessProbe:   
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 1    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pxbbq-svc
+  namespace: pxbbq
+  labels:
+    app: pxbbq-web
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
+  selector:
+    app: pxbbq-web
