@@ -42,8 +42,6 @@ func main() {
 	// check DB Connection on startup
 	lib.MongoCheck(mongoHost, mongoUser, mongoPass, mongoTLS)
 
-	fmt.Println("Testing Order Retrival")
-
 	//web
 	fileServer := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fileServer)
