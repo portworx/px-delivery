@@ -41,9 +41,18 @@
 					<section id="three" class="wrapper style3 special">
 						<div class="inner">
 							<header class="major">
-								<h1>{{.PageTitle}}</h1>
+								<h1><ul>{{.PageTitle}}</ul></h1>
+
 								<ul>
-									{{.Message}}
+									{{range .Orders}}
+										<li>"Order ID: {{.OrderId}} <br>
+											"Main Dish: " {{.Main}} <br>
+											"Side Dishes: " {{.Side1}} "," {{.Side2}}  <br>
+											"Drink: " {{.Drink}} 
+											<br>
+											<br>
+										</li>
+								{{end}}
 								</ul>
 							</header>
 							

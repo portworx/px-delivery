@@ -8,22 +8,50 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Order struct {
-	OrderId     int    `bson:"orderid"`
-	Email       string `bson:"email"`
-	Main        string `bson:"main"`
-	Side1       string `bson:"side1"`
-	Side2       string `bson:"side2"`
-	Drink       string `bson:"drink"`
-	OrderStatus string `bson:"orderstatus"`
+	OrderId     int    `bson:"orderid,omitempty"`
+	Email       string `bson:"email,omitempty"`
+	Main        string `bson:"main,omitempty"`
+	Side1       string `bson:"side1,omitempty"`
+	Side2       string `bson:"side2,omitempty"`
+	Drink       string `bson:"drink,omitempty"`
+	OrderStatus string `bson:"orderstatus,omitempty"`
+}
+
+type myOrderData struct {
+	PageTitle string
+	Orders    []Order
 }
 
 func generateOrderID() int {
 	rand.Seed(time.Now().UnixNano())
 	orderId := rand.Intn(100000)
 	return (orderId)
+}
+
+func GetMyOrders(email string) []Order {
+	fmt.Println("#############Executing Function GetMyOrders##############")
+	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
+	collection := client.Database("porxbbq").Collection("orders")
+
+	filter := bson.D{{"email", email}}
+
+	var myOrders []Order
+
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err = cursor.All(context.TODO(), &myOrders); err != nil {
+		log.Fatal(err)
+	}
+
+	return (myOrders)
+
 }
 
 func registerOrder(orderNum int, email string, main string, side1 string, side2 string, drink string) {
@@ -99,4 +127,22 @@ func OrderHandler(w http.ResponseWriter, r *http.Request) {
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
 	}
+}
+
+func MyOrderHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("method:", r.Method, "on URL:", r.URL)
+	session, _ := store.Get(r, "cookie-name")
+	fmt.Println(session.Values["email"])
+	email := session.Values["email"].(string)
+
+	myOrders := GetMyOrders(email)
+
+	data := myOrderData{
+		PageTitle: "My Order History",
+		Orders:    myOrders,
+	}
+
+	t, _ := template.ParseFiles("./static/myorders.html")
+	t.Execute(w, data)
+
 }

@@ -57,6 +57,7 @@ func main() {
 	http.HandleFunc("/loyaltystatus", lib.LoyaltystatusHandler)
 	http.HandleFunc("/order", lib.OrderHandler)
 	http.HandleFunc("/redirect_login", lib.OrderLoginHandler)
+	http.HandleFunc("/myorders", lib.MyOrderHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

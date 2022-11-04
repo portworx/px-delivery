@@ -238,6 +238,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// called if you attempt to order without being logged in first.
+// The redirect in this handler is different from the the Order Handler and Login Handlers
 func OrderLoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("method:", r.Method, "on URL:", r.URL)
 	session, _ := store.Get(r, "cookie-name")
