@@ -16,7 +16,7 @@ spec:
     spec:                        
       containers:
       - name: pxbbq-web
-        image: eshanks16/pxbbq:1
+        image: eshanks16/pxbbq:v2
         env:
         - name: MONGO_HOST
           value: "mongo"
