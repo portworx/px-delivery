@@ -37,27 +37,30 @@
 						</nav>
 					</header>
 
-								<!-- Three -->
-					<section id="three" class="wrapper style3 special">
+					<section id="Orders" class="wrapper style3 special">
 						<div class="inner">
 							<header class="major">
 								<h1><ul>{{.PageTitle}}</ul></h1>
-
-								<ul>
-									{{range .Orders}}
-										<li>"Order ID: {{.OrderId}} <br>
-											"Main Dish: " {{.Main}} <br>
-											"Side Dishes: " {{.Side1}} "," {{.Side2}}  <br>
-											"Drink: " {{.Drink}} 
-											<br>
-											<br>
-										</li>
-								{{end}}
-								</ul>
-							</header>
-							
-						</div>
+							<table class="table" width="50" border="1">
+								<tr>
+									<th>"Order ID"</th>
+									<th>"Main Dish"</th>
+									<th>"Side Dish 1"</th>
+									<th>"Side Dish 2"</th>
+									<th>"Drink"</th>
+								</tr>
+								{{ range .Orders }}
+								<tr>
+									<td>{{ .OrderId }}</td>
+									<td>{{ .Main }}</td>
+									<td>{{ .Side1 }}</td>
+									<td>{{ .Side2 }}</td>
+									<td>{{ .Drink }}</td>
+								</tr>
+								{{ end }}
+							</table>
 					</section>
+
 
 				<!-- CTA -->
 					<section id="cta" class="wrapper style4">
