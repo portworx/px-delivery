@@ -53,10 +53,8 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="order.html">Order</a></li>
           
           <li><a href="contact.html">Contact</a></li>
           <li><a class="get-a-quote" href="login.html">Login</a></li>
@@ -75,8 +73,8 @@
         <div class="container position-relative">
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
-              <h2>Login</h2>
-              <p>Login to your delivery services portal.</p>
+              <h2>Register</h2>
+              <p>Register for a Portworx Delivery account to enjoy your favorite food deliveries!</p>
             </div>
           </div>
         </div>
@@ -85,7 +83,7 @@
         <div class="container">
           <ol>
             <li><a href="index.html">Home</a></li>
-            <li>Login</li>
+            <li>Register</li>
           </ol>
         </div>
       </nav>
@@ -93,28 +91,65 @@
 
     <!-- ======= Get a Quote Section ======= -->
     <section id="get-a-quote" class="get-a-quote">
-      <div class="container">
+      <div class="container" data-aos="fade-up">
 
-            <section id="cta" class="wrapper style1">
-				<div class="inner">
-					<h4>Please login with your e-mail address or register for an account</h4>
-				</br>
-				</div>
-				<div class="inner">
-					<div></div>
-					<header>
-						<form action="/redirect_login" method="post">
-							Email:<input type="text" name="email">
-							Password:<input type="password" name="password">
-							<input type="submit" value="Login">
-						</form>
-					</header>
-				</div>
-				<div class="inner">
-					</br>
-					<p> Need to register for an account?</p>
-					<a href="/register" class="button fit primary">Register</a>
-				</div>
+        <div class="row g-0">
+
+          <div class="col-lg-5 quote-bg" style="background-image: url(assets/img/quote-bg.jpg);"></div>
+
+          <div class="col-lg-7">
+            <form action="forms/quote.php" method="post" class="php-email-form">
+              <h3>Get a quote</h3>
+              <p>Vel nobis odio laboriosam et hic voluptatem. Inventore vitae totam. Rerum repellendus enim linead sero park flows.</p>
+              <div class="row gy-4">
+
+                <div class="col-md-6">
+                  <input type="text" name="departure" class="form-control" placeholder="City of Departure" required>
+                </div>
+
+                <div class="col-md-6">
+                  <input type="text" name="delivery" class="form-control" placeholder="Delivery City" required>
+                </div>
+
+                <div class="col-md-6">
+                  <input type="text" name="weight" class="form-control" placeholder="Total Weight (kg)" required>
+                </div>
+
+                <div class="col-md-6">
+                  <input type="text" name="dimensions" class="form-control" placeholder="Dimensions (cm)" required>
+                </div>
+
+                <div class="col-lg-12">
+                  <h4>Your Personal Details</h4>
+                </div>
+
+                <div class="col-md-12">
+                  <input type="text" name="name" class="form-control" placeholder="Name" required>
+                </div>
+
+                <div class="col-md-12 ">
+                  <input type="email" class="form-control" name="email" placeholder="Email" required>
+                </div>
+
+                <div class="col-md-12">
+                  <input type="text" class="form-control" name="phone" placeholder="Phone" required>
+                </div>
+
+                <div class="col-md-12">
+                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required></textarea>
+                </div>
+
+                <div class="col-md-12 text-center">
+                  <div class="loading">Loading</div>
+                  <div class="error-message"></div>
+                  <div class="sent-message">Your quote request has been sent successfully. Thank you!</div>
+
+                  <button type="submit">Get a quote</button>
+                </div>
+
+              </div>
+            </form>
+          </div><!-- End Quote Form -->
 
         </div>
 
