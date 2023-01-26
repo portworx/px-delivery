@@ -55,11 +55,14 @@ func main() {
 	http.HandleFunc("/login", lib.LoginHandler)       //used
 	http.HandleFunc("/logout", lib.LogoutHandler)     //used
 	http.HandleFunc("/register", lib.RegisterHandler) //used
-	http.HandleFunc("/order", lib.OrderHandler)
 	http.HandleFunc("/redirect_login", lib.OrderLoginHandler)
-	http.HandleFunc("/myorders", lib.MyOrderHandler)
-	http.HandleFunc("/test", lib.TestHandler)
-	http.HandleFunc("/contact", lib.ContactHandler)
+	http.HandleFunc("/myorders", lib.MyOrderHandler)                   //used
+	http.HandleFunc("/test", lib.TestHandler)                          //used for testing
+	http.HandleFunc("/contact", lib.ContactHandler)                    //used
+	http.HandleFunc("/order", lib.OrderHandler)                        //general order page where you select restaurants
+	http.HandleFunc("/pxbbq_order", lib.PxbbqOrderHandler)             //Store Ordering
+	http.HandleFunc("/mcd_order", lib.McdOrderHandler)                 //Store Ordering
+	http.HandleFunc("/centralperk_order", lib.CentralperkOrderHandler) //Store Ordering
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

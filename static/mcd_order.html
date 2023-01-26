@@ -83,52 +83,77 @@
       </nav>
     </div><!-- End Breadcrumbs -->
 
-        <!-- ======= Featured Restaurants Section ======= -->
-        <section id="service" class="services pt-0">
-          <div class="container" data-aos="fade-up">
-    
-            <div class="section-header">
-              <span>Featured Restaurants</span>
-              <h2>Featured Restaurants</h2>
-    
-            </div>
-    
-            <div class="row gy-4">
-    
-              <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="card">
-                  <div class="card-img">
-                    <img src="assets/img/porx-510-340.png" alt="" class="img-fluid">
-                  </div>
-                  <h3><a href="/pxbbq_order" class="stretched-link">Portworx BBQ</a></h3>
-                  <p>Portworx BBQ is a nationwide favorite. Order delicious PX BBQ for your next party!</p>
+    <!-- ======= Get a Quote Section ======= -->
+    <section id="get-a-quote" class="get-a-quote">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row g-0">
+
+          <div class="col-lg-5 quote-bg" style="background-image: url(assets/img/mcdowells.png);"></div>
+
+          <div class="col-lg-7 quote-form">
+            <form action="/order" method="post" class="inner">
+              <h3>Order your food delivery</h3>
+              <p>Place your food delivery order here.</p>
+              <div class="row gy-4">
+
+                <div class="col-md-6">
+                  Main Dish:
+                  <input type="text" name="main" class="form-control" list="maindish" required>
+                  <datalist id="maindish">
+                    <option value="Smoked Brisket"></option>
+                    <option value="Pulled Pork"></option>
+                    <option value="Smoked Chicken"></option>
+                    <option value="Famous Ribs"></option>
+                    <option value="Chicken Nuggets"></option>
+                    <option value="Grilled Cauliflower Steaks"></option>
+                    <option value="Grilled Portabello Mushrooms"></option>
+                </datalist>
                 </div>
-              </div><!-- End Card Item -->
-    
-              <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="card">
-                  <div class="card-img">
-                    <img src="assets/img/mcdowells.png" alt="" class="img-fluid">
-                  </div>
-                  <h3><a href="/mcd_order" class="stretched-link">McDowells</a></h3>
-                  <p>Get your favorite burger, the Big Mick!</p>
+
+                <div class="col-md-6">
+                  Side Dish 1:<input type="text" name="side1" class="form-control" list="sides" required>
                 </div>
-              </div><!-- End Card Item -->
-    
-              <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="card">
-                  <div class="card-img">
-                    <img src="assets/img/centralperk.png" alt="" class="img-fluid">
-                  </div>
-                  <h3><a href="/centralperk_order" class="stretched-link">Central Perk</a></h3>
-                  <p>Grab a scone and your favorite coffee from Central Perk.</p>
+
+                <div class="col-md-6">
+                  Side Dish 2:
+                  <input type="text" name="side2" class="form-control" list="sides" required>
                 </div>
-              </div><!-- End Card Item -->
-    
-            </div>
-    
-          </div>
-        </section><!-- End Featured Restaurants Section -->
+
+                <datalist id="sides">
+                  <option value="Cornbread"></option>
+                  <option value="French Fries"></option>
+                  <option value="Corn Pudding"></option>
+                  <option value="Coleslaw"></option>
+                  <option value="Brussel Sprouts"></option>
+                  <option value="Baked Beans"></option>
+                  <option value="Applesauce"></option>
+                </datalist>
+
+                <div class="col-md-6">
+                  Drink:
+                  <input type="text" name="drink" class="form-control" list="drinks" required>
+                </div>
+
+                <datalist id="drinks">
+                  <option value="Sweet Tea"></option>
+                  <option value="Unsweet Tea"></option>
+                  <option value="Cola"></option>
+                  <option value="Diet"></option>
+                  <option value="Porx Special"></option>
+                </datalist>
+
+                <input type="submit" value="Place Order">
+                </div>
+
+              </div>
+            </form>
+          </div><!-- End Quote Form -->
+
+        </div>
+
+      </div>
+    </section><!-- End Get a Quote Section -->
 
   </main><!-- End #main -->
 
