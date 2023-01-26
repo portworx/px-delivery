@@ -72,7 +72,7 @@ func registerOrder(orderNum int, email string, main string, side1 string, side2 
 func orderStatus(w http.ResponseWriter, r *http.Request, messageData PageData) {
 	fmt.Println("method:", r.Method, "on URL:", r.URL)
 	session, _ := store.Get(r, "cookie-name")
-	t, _ := template.ParseFiles("./static/internal_order_status.html")
+	t, _ := template.ParseFiles("./static/order_status.html")
 	if r.Method == "POST" {
 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
 			t, _ = template.ParseFiles("./static/external_order_status.html")
