@@ -1428,6 +1428,12 @@ section {
   background-position: center;
 }
 
+.get-a-quote .quote-form {
+  background: #f3f6fc;
+  padding: 40px;
+  height: 100%;
+}
+
 .get-a-quote .php-email-form {
   background: #f3f6fc;
   padding: 40px;
