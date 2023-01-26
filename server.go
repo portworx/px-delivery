@@ -50,12 +50,11 @@ func main() {
 		r.URL.Path += ".html"
 		fileServer.ServeHTTP(w, r)
 	})
-	http.HandleFunc("/healthz", lib.HealthHandler)
-	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/login", lib.LoginHandler)
-	http.HandleFunc("/logout", lib.LogoutHandler)
-	http.HandleFunc("/register", lib.RegisterHandler)
-	http.HandleFunc("/loyaltystatus", lib.LoyaltystatusHandler)
+	http.HandleFunc("/healthz", lib.HealthHandler)    //used
+	http.Handle("/metrics", promhttp.Handler())       //used
+	http.HandleFunc("/login", lib.LoginHandler)       //used
+	http.HandleFunc("/logout", lib.LogoutHandler)     //used
+	http.HandleFunc("/register", lib.RegisterHandler) //used
 	http.HandleFunc("/order", lib.OrderHandler)
 	http.HandleFunc("/redirect_login", lib.OrderLoginHandler)
 	http.HandleFunc("/myorders", lib.MyOrderHandler)

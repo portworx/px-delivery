@@ -322,49 +322,4 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 302)
 }
 
-func LoyaltystatusHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method:", r.Method, "on URL:", r.URL)
-	session, _ := store.Get(r, "cookie-name")
-
-	// Check if user is authenticated
-	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		fmt.Println("User not Authenticated - Forbidden!")
-		statusData := PageData{
-			PageTitle:  "",
-			Message:    "Forbidden!",
-			SiteAction: "Login",
-			ActionPage: "/login",
-		}
-		if r.Method == "GET" {
-			t, _ := template.ParseFiles("./static/loyaltystatus.html")
-			t.Execute(w, statusData)
-		}
-		return
-	}
-
-	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	collection := client.Database("porxbbq").Collection("registrations")
-
-	loginFilter := bson.D{{"email", session.Values["email"]}}
-
-	var result Loyalist
-
-	err = collection.FindOne(context.TODO(), loginFilter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	statusData := PageData{
-		PageTitle:  "Loyalty Status",
-		Message:    "Thank you for being a loyalty customer. You're current status level is " + fmt.Sprintf("%v", result.LoyaltyTier) + "!",
-		SiteAction: "Logout",
-		ActionPage: "/logout",
-	}
-	if r.Method == "GET" {
-		t, _ := template.ParseFiles("./static/loyaltystatus.html")
-		t.Execute(w, statusData)
-	}
-
-}
-
 // end of page handlers
