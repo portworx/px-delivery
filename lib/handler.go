@@ -38,6 +38,10 @@ var (
 	mongoTLS  string = os.Getenv("MONGO_TLS")
 )
 
+type authData struct {
+	IsAuthed bool
+}
+
 func comparePasswords(hashedPwd string, plainPwd []byte) bool {
 	// Since we'll be getting the hashed password from the DB it
 	// will be a string so we'll need to convert it to a byte slice
@@ -154,6 +158,29 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Ready")
+}
+
+func TestHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("method:", r.Method, "on URL:", r.URL)
+	//session, _ := store.Get(r, "cookie-name")
+	//fmt.Println(session.Values["authenticated"])
+	//fmt.Println(session.Values["email"])
+	//fmt.Println(r.Method)
+	//generate Order ID
+	//orderNum := generateOrderID()
+
+	//if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+	//	fmt.Println("Not Authenticated")
+	//} else {
+	//	fmt.Println("Authenticated")
+	//}
+
+	data := authData{
+		IsAuthed: false,
+	}
+
+	t, _ := template.ParseFiles("./static/index.html")
+	t.Execute(w, data)
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {

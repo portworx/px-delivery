@@ -45,6 +45,7 @@ func main() {
 	//web
 	fileServer := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fileServer)
+	//http.HandleFunc("/", lib.TestHandler)
 	http.HandleFunc("/loyalty", func(w http.ResponseWriter, r *http.Request) {
 		r.URL.Path += ".html"
 		fileServer.ServeHTTP(w, r)
@@ -58,6 +59,7 @@ func main() {
 	http.HandleFunc("/order", lib.OrderHandler)
 	http.HandleFunc("/redirect_login", lib.OrderLoginHandler)
 	http.HandleFunc("/myorders", lib.MyOrderHandler)
+	http.HandleFunc("/test", lib.TestHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

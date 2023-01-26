@@ -84,9 +84,9 @@ func orderStatus(w http.ResponseWriter, r *http.Request, messageData PageData) {
 func OrderHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("method:", r.Method, "on URL:", r.URL)
 	session, _ := store.Get(r, "cookie-name")
-	//fmt.Println(session.Values["authenticated"])
-	//fmt.Println(session.Values["email"])
-	//fmt.Println(r.Method)
+	fmt.Println(session.Values["authenticated"])
+	fmt.Println(session.Values["email"])
+	fmt.Println(r.Method)
 	//generate Order ID
 	orderNum := generateOrderID()
 
@@ -99,7 +99,7 @@ func OrderHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
 			fmt.Println("Order form requested, but unauthenticated; redirecting to login page.")
-			t, _ := template.ParseFiles("./static/redirect_login.html")
+			t, _ := template.ParseFiles("./static/login.html")
 			t.Execute(w, nil)
 		} else {
 			fmt.Printf("should allow order")
