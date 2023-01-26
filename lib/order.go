@@ -90,11 +90,11 @@ func OrderHandler(w http.ResponseWriter, r *http.Request) {
 	//generate Order ID
 	orderNum := generateOrderID()
 
-	//if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-	//	fmt.Println("Not Authenticated")
-	//} else {
-	//	fmt.Println("Authenticated")
-	//}
+	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+		fmt.Println("Not Authenticated")
+	} else {
+		fmt.Println("Authenticated")
+	}
 
 	if r.Method == "GET" {
 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {

@@ -51,15 +51,27 @@
 
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a href="index.html" class="active">Home</a></li>
-          <li><a href="order.html">Order</a></li>
-          
-          <li><a href="contact.html">Contact</a></li>
-          <li><a class="get-a-quote" href="login.html">Login</a></li>
-        </ul>
-      </nav><!-- .navbar -->
+      <header id="header">
+        {{ if eq .IsAuthed true }}
+          <nav id="navbar" class="navbar">
+            <ul>
+              <li><a href="index.html" class="active">Home</a></li>
+              <li><a href="/order">Order</a></li>
+              <li><a href="/contact">Contact</a></li>
+              <li><a class="get-a-quote" href="/logout">Logout</a></li>
+            </ul>
+          </nav>
+        {{ end }}
+        {{ if eq .IsAuthed false }}
+        <nav id="navbar" class="navbar">
+          <ul>
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="/order">Order</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a class="get-a-quote" href="/login">Login</a></li>
+          </ul>
+        </nav>
+        {{ end }}
 
     </div>
   </header><!-- End Header -->
@@ -74,7 +86,7 @@
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
               <h2>Contact</h2>
-              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+              <p>Contact us for all of your food delivery needs. Our offices are open from 9am to 5pm (EST) Monday through Friday.</p>
             </div>
           </div>
         </div>
