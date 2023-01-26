@@ -20,6 +20,11 @@ type Loyalist struct {
 	Email       string
 	Password    string
 	LoyaltyTier string
+	Street1     string
+	Street2     string
+	City        string
+	State       string
+	Zipcode     string
 }
 
 type PageData struct {
@@ -67,13 +72,13 @@ func hashAndSalt(pwd []byte) string {
 	return string(hash)
 }
 
-func registerUser(firstname string, lastname string, email string, password string) {
+func registerUser(firstname string, lastname string, email string, password string, street1 string, street2 string, city string, state string, zipcode string) {
 	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
 	collection := client.Database("porxbbq").Collection("registrations")
 
 	password = hashAndSalt([]byte(password))
 	//fmt.Println(password)
-	entry := Loyalist{firstname, lastname, email, password, "silver"}
+	entry := Loyalist{firstname, lastname, email, password, "silver", street1, street2, city, state, zipcode}
 
 	insertResult, err := collection.InsertOne(context.TODO(), entry)
 	if err != nil {
@@ -210,8 +215,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			lastname := r.FormValue("lastname")
 			email := r.FormValue("email")
 			password := r.FormValue("password")
+			street1 := r.FormValue("street1")
+			street2 := r.FormValue("street2")
+			city := r.FormValue("city")
+			state := r.FormValue("state")
+			zipcode := r.FormValue("zipcode")
 
-			registerUser(firstname, lastname, email, password)
+			registerUser(firstname, lastname, email, password, street1, street2, city, state, zipcode)
 
 			//Display Operation Status Page to User
 			session.Values["authenticated"] = true

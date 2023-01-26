@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Logis Bootstrap Template - Get a Quote</title>
+  <title>Portworx Data Services</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -29,12 +29,6 @@
   <!-- Template Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 
-  <!-- =======================================================
-  * Template Name: Logis - v1.3.0
-  * Template URL: https://bootstrapmade.com/logis-bootstrap-logistics-website-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
@@ -95,10 +89,10 @@
 
         <div class="row g-0">
 
-          <div class="col-lg-5 quote-bg" style="background-image: url(assets/img/quote-bg.jpg);"></div>
+
 
           <div class="col-lg-7">
-            <form action="forms/quote.php" method="post" class="php-email-form">
+            <form action="/register" method="post" class="inner">
               <h3>Register for Delivery</h3>
               <p>Please provide a login and contact information.</p>
               <div class="row gy-4">
@@ -122,30 +116,84 @@
                 <div class="col-lg-12">
                   <h4>Your Delivery Address</h4>
                 </div>
-<!--
+
                 <div class="col-md-12">
-                  <input type="text" name="name" class="form-control" placeholder="Name" required>
+                  <input type="text" name="street1" class="form-control" placeholder="Street Address 1" required>
                 </div>
 
                 <div class="col-md-12 ">
-                  <input type="email" class="form-control" name="email" placeholder="Email" required>
+                  <input type="text" class="form-control" name="street2" placeholder="Street Address 2" >
                 </div>
 
                 <div class="col-md-12">
-                  <input type="text" class="form-control" name="phone" placeholder="Phone" required>
+                  <input type="text" class="form-control" name="city" placeholder="City" required>
                 </div>
 
                 <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required></textarea>
+                  <input type="text" class="form-control" name="state" list="State" placeholder="State" required>
+                  <datalist id="State">
+                    <option value="AK"></option>
+                    <option value="AL"></option>
+                    <option value="AR"></option>
+                    <option value="AS"></option>
+                    <option value="AZ"></option>
+                    <option value="CA"></option>
+                    <option value="CO"></option>
+                    <option value="CT"></option>
+                    <option value="DC"></option>
+                    <option value="DE"></option>
+                    <option value="FL"></option>
+                    <option value="GA"></option>
+                    <option value="GU"></option>
+                    <option value="HI"></option>
+                    <option value="IA"></option>
+                    <option value="ID"></option>
+                    <option value="IL"></option>
+                    <option value="IN"></option>
+                    <option value="KS"></option>
+                    <option value="KY"></option>
+                    <option value="LA"></option>
+                    <option value="MA"></option>
+                    <option value="MD"></option>
+                    <option value="ME"></option>
+                    <option value="MH"></option>
+                    <option value="MI"></option>
+                    <option value="MN"></option>
+                    <option value="MO"></option>
+                    <option value="MS"></option>
+                    <option value="MT"></option>
+                    <option value="NC"></option>
+                    <option value="ND"></option>
+                    <option value="NE"></option>
+                    <option value="NH"></option>
+                    <option value="NJ"></option>
+                    <option value="NM"></option>
+                    <option value="NV"></option>
+                    <option value="OH"></option>
+                    <option value="OK"></option>
+                    <option value="OR"></option>
+                    <option value="PA"></option>
+                    <option value="PR"></option>
+                    <option value="PW"></option>
+                    <option value="RI"></option>
+                    <option value="SC"></option>
+                    <option value="SD"></option>
+                    <option value="TN"></option>
+                    <option value="TX"></option>
+                    <option value="UT"></option>
+                    <option value="VA"></option>
+                    <option value="VI"></option>
+                    <option value="VT"></option>
+                    <option value="WA"></option>
+                    <option value="WI"></option>
+                    <option value="WV"></option>
+                  </datalist>
                 </div>
 
-                <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your quote request has been sent successfully. Thank you!</div>
-                
-                  <button type="submit">Get a quote</button>
-                -->
+                <div class="col-md-12">
+                  <input type="text" class="form-control" name="zipcode" placeholder="Zip Code" required>
+                </div>
+
                   <input type="submit" value="Register">
                 </div>
 
