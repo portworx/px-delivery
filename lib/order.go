@@ -303,14 +303,31 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		side2 := r.FormValue("side2")
 		drink := r.FormValue("drink")
 
-		registerOrder(orderNum, email, main, side1, side2, drink)
+		fmt.Println("Order Taken by Central Perk")
+		fmt.Println("Ordered : " + main)
+		fmt.Println("Ordered : " + side1)
+		fmt.Println("Ordered : " + side2)
+		fmt.Println("Ordered : " + drink)
+		fmt.Print("########")
+		currentTime := time.Now()
+		orderDate := currentTime.Format("2 January 2006")
+
+		//submit order to Kafka
+		SubmitOrder(orderNum, orderDate, email, "Central Perk", main, side1, side2, drink)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
 	}
 }
 
-func SubmitOrder() {
+func SubmitOrder(orderNum int, orderDate string, email string, restaurant string, main string, side1 string, side2 string, drink string) {
+
+	fmt.Println("I'm begging the Submit Order Function Now - Trying to Submit to Kafka")
+	fmt.Println("main is : " + main)
+	fmt.Println("side1 is : " + side1)
+	fmt.Println("side2 is : " + side2)
+	fmt.Println("drink is : " + drink)
+	fmt.Println("#########")
 	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:29092"})
 
 	if err != nil {
@@ -324,14 +341,14 @@ func SubmitOrder() {
 	// Produce messages to topic (asynchronously)
 	topic := "order"
 	msg := PxOrder{
-		Email:       "eshanks@purestorage.com",
-		OrderId:     12345,
-		Restaurant:  "pxbbq",
-		Main:        "brisket",
-		Side1:       "French Fries",
-		Side2:       "Baked Beans",
-		Drink:       "Sweet Tea",
-		Date:        "01-01-2023",
+		Email:       email,
+		OrderId:     orderNum,
+		Restaurant:  restaurant,
+		Main:        main,
+		Side1:       side1,
+		Side2:       side2,
+		Drink:       drink,
+		Date:        orderDate,
 		Street1:     "123 main street",
 		Street2:     "",
 		City:        "springfield",

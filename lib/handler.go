@@ -187,7 +187,7 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	//t, _ := template.ParseFiles("./static/index.html")
 	//t.Execute(w, data)
 
-	SubmitOrder()
+	//SubmitOrder()
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
