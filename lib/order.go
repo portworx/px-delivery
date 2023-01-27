@@ -25,15 +25,20 @@ type Order struct {
 }
 
 type PxOrder struct {
-	OrderId    int    `bson:"orderid,omitempty"`
-	Email      string `bson:"email,omitempty"`
-	Restaurant string `bson:"restaurant,omitempty"`
-	Date       string `bson:"date,omitempty"`
-	Street1    string `bson:"street1,omitempty"`
-	Street2    string `bson:"street2,omitempty"`
-	City       string `bson:"city,omitempty"`
-	State      string `bson:"state,omitempty"`
-	Zip        string `bson:"zip,omitempty"`
+	OrderId     int    `bson:"orderid,omitempty"`
+	Email       string `bson:"email,omitempty"`
+	Main        string `bson:"main,omitempty"`
+	Side1       string `bson:"side1,omitempty"`
+	Side2       string `bson:"side2,omitempty"`
+	Drink       string `bson:"drink,omitempty"`
+	Restaurant  string `bson:"restaurant,omitempty"`
+	Date        string `bson:"date,omitempty"`
+	Street1     string `bson:"street1,omitempty"`
+	Street2     string `bson:"street2,omitempty"`
+	City        string `bson:"city,omitempty"`
+	State       string `bson:"state,omitempty"`
+	Zip         string `bson:"zip,omitempty"`
+	OrderStatus string `bson:"orderstatus,omitempty"`
 }
 
 type myOrderData struct {
@@ -319,15 +324,20 @@ func SubmitOrder() {
 	// Produce messages to topic (asynchronously)
 	topic := "order"
 	msg := PxOrder{
-		Email:      "eshanks@purestorage.com",
-		OrderId:    12345,
-		Restaurant: "pxbbq",
-		Date:       "01-01-2023",
-		Street1:    "123 main street",
-		Street2:    "",
-		City:       "springfield",
-		State:      "IL",
-		Zip:        "60606",
+		Email:       "eshanks@purestorage.com",
+		OrderId:     12345,
+		Restaurant:  "pxbbq",
+		Main:        "brisket",
+		Side1:       "French Fries",
+		Side2:       "Baked Beans",
+		Drink:       "Sweet Tea",
+		Date:        "01-01-2023",
+		Street1:     "123 main street",
+		Street2:     "",
+		City:        "springfield",
+		State:       "IL",
+		Zip:         "60606",
+		OrderStatus: "Pending",
 	}
 
 	//testing
