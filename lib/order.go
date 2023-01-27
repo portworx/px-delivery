@@ -2,6 +2,7 @@ package lib
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -9,6 +10,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/confluentinc/confluent-kafka-go/kafka"
+	//"github.com/confluentinc/confluent-kafka-go/schemaregistry"
+	//"github.com/confluentinc/confluent-kafka-go/schemaregistry/serde"
+	//"github.com/confluentinc/confluent-kafka-go/schemaregistry/serde/jsonschema"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -20,6 +25,18 @@ type Order struct {
 	Side2       string `bson:"side2,omitempty"`
 	Drink       string `bson:"drink,omitempty"`
 	OrderStatus string `bson:"orderstatus,omitempty"`
+}
+
+type PxOrder struct {
+	OrderId    int    `bson:"orderid,omitempty"`
+	Email      string `bson:"email,omitempty"`
+	Restaurant string `bson:"restaurant,omitempty"`
+	Date       string `bson:"date,omitempty"`
+	Street1    string `bson:"street1,omitempty"`
+	Street2    string `bson:"street2,omitempty"`
+	City       string `bson:"city,omitempty"`
+	State      string `bson:"state,omitempty"`
+	Zip        string `bson:"zip,omitempty"`
 }
 
 type myOrderData struct {
@@ -289,4 +306,76 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
 	}
+}
+
+func SubmitOrder() {
+	//url := "http://localhost:8081"
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:29092"})
+
+	if err != nil {
+		fmt.Printf("Failed to create producer: %s\n", err)
+	}
+
+	fmt.Printf("Created Producer %v\n", p)
+
+	//client, err := schemaregistry.NewClient(schemaregistry.NewConfig(url))
+
+	//if err != nil {
+	//	fmt.Printf("Failed to create schema registry client: %s\n", err)
+	//}
+
+	//ser, err := jsonschema.NewSerializer(client, serde.ValueSerde, jsonschema.NewSerializerConfig())
+
+	//if err != nil {
+	//	fmt.Printf("Failed to create serializer: %s\n", err)
+	//}
+
+	// Optional delivery channel, if not specified the Producer object's
+	// .Events channel is used.
+	deliveryChan := make(chan kafka.Event)
+
+	// Produce messages to topic (asynchronously)
+	topic := "order"
+	msg := PxOrder{
+		Email:      "eshanks@purestorage.com",
+		OrderId:    12345,
+		Restaurant: "pxbbq",
+		Date:       "01-01-2023",
+		Street1:    "123 main street",
+		Street2:    "",
+		City:       "springfield",
+		State:      "IL",
+		Zip:        "60606",
+	}
+
+	//testing
+	payload, err := json.Marshal(msg)
+
+	//end testing
+
+	//payload, err := ser.Serialize(topic, &msg)
+	//if err != nil {
+	//	fmt.Printf("Failed to serialize payload: %s\n", err)
+	//}
+
+	err = p.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          payload,
+		Headers:        []kafka.Header{{Key: "myTestHeader", Value: []byte("header values are binary")}},
+	}, deliveryChan)
+	if err != nil {
+		fmt.Printf("Produce failed: %v\n", err)
+	}
+
+	e := <-deliveryChan
+	m := e.(*kafka.Message)
+
+	if m.TopicPartition.Error != nil {
+		fmt.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
+	} else {
+		fmt.Printf("Delivered message to topic %s [%d] at offset %v\n",
+			*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
+	}
+
+	close(deliveryChan)
 }

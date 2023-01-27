@@ -180,12 +180,14 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	//	fmt.Println("Authenticated")
 	//}
 
-	data := authData{
-		IsAuthed: false,
-	}
+	//data := authData{
+	//	IsAuthed: false,
+	//}
 
-	t, _ := template.ParseFiles("./static/index.html")
-	t.Execute(w, data)
+	//t, _ := template.ParseFiles("./static/index.html")
+	//t.Execute(w, data)
+
+	SubmitOrder()
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
