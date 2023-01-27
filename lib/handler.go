@@ -2,6 +2,7 @@ package lib
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -34,6 +35,14 @@ type PageData struct {
 	ActionPage string
 }
 
+type Address struct {
+	Street1 string `bson:"street1,omitempty"`
+	Street2 string `bson:"street2,omitempty"`
+	City    string `bson:"city,omitempty"`
+	State   string `bson:"state,omitempty"`
+	Zipcode string `bson:"zipcode,omitempty"`
+}
+
 var (
 	key              = []byte("kefue-secret-198")
 	store            = sessions.NewCookieStore(key)
@@ -45,6 +54,30 @@ var (
 
 type authData struct {
 	IsAuthed bool
+}
+
+func GetAddress(email string) Address {
+	fmt.Println("#############Executing Function GetAddress##############")
+	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
+	collection := client.Database("porxbbq").Collection("registrations")
+
+	filter := bson.D{{"email", email}}
+
+	var myAddress Address
+
+	err = collection.FindOne(context.TODO(), filter).Decode(&myAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, _ := json.Marshal(myAddress)
+
+	fmt.Println("############################################")
+	fmt.Println("Address is : " + string(res))
+	fmt.Println("############################################")
+
+	return (myAddress)
+
 }
 
 func comparePasswords(hashedPwd string, plainPwd []byte) bool {
@@ -188,6 +221,8 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	//t.Execute(w, data)
 
 	//SubmitOrder()
+
+	GetAddress("bart@test.com")
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {

@@ -300,7 +300,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 			Message:   fmt.Sprintf("Your order has been received. Order number %v", orderNum),
 		}
 
-		//write to mongo
+		//write to kafka
 		fmt.Printf("Order submitted by: ")
 		fmt.Println(session.Values["email"].(string))
 		email := session.Values["email"].(string)
@@ -309,11 +309,25 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		side2 := r.FormValue("side2")
 		drink := r.FormValue("drink")
 
+		//get address of user
+		myAddress := GetAddress(email)
+		street1 := myAddress.Street1
+		street2 := myAddress.Street2
+		city := myAddress.City
+		state := myAddress.State
+		zipcode := myAddress.Zipcode
+
 		fmt.Println("Order Taken by Central Perk")
 		fmt.Println("Ordered : " + main)
 		fmt.Println("Ordered : " + side1)
 		fmt.Println("Ordered : " + side2)
 		fmt.Println("Ordered : " + drink)
+		fmt.Println("Street1 : " + street1)
+		fmt.Println("Street2 : " + street2)
+		fmt.Println("City  : " + city)
+		fmt.Println("State  : " + state)
+		fmt.Println("Zip  : " + zipcode)
+
 		fmt.Print("########")
 		currentTime := time.Now()
 		orderDate := currentTime.Format("2 January 2006")
