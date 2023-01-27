@@ -36,6 +36,8 @@ var (
 	mongoUser   string = os.Getenv("MONGO_USER")
 	mongoPass   string = os.Getenv("MONGO_PASS")
 	mongoTLS    string = os.Getenv("MONGO_TLS")
+	kafkaHost   string = os.Getenv("KAFKA_HOST")
+	kafkaPort   string = os.Getenv("KAFKA_PORT")
 )
 
 func main() {

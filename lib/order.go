@@ -8,10 +8,16 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"go.mongodb.org/mongo-driver/bson"
+)
+
+var (
+	kafkaHost string = os.Getenv("KAFKA_HOST")
+	kafkaPort string = os.Getenv("KAFKA_PORT")
 )
 
 type Order struct {
@@ -323,12 +329,15 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 func SubmitOrder(orderNum int, orderDate string, email string, restaurant string, main string, side1 string, side2 string, drink string) {
 
 	fmt.Println("I'm begging the Submit Order Function Now - Trying to Submit to Kafka")
+	fmt.Println("#########")
+	fmt.Println("email is : " + email)
+	fmt.Println("restaurant is : " + restaurant)
 	fmt.Println("main is : " + main)
 	fmt.Println("side1 is : " + side1)
 	fmt.Println("side2 is : " + side2)
 	fmt.Println("drink is : " + drink)
 	fmt.Println("#########")
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:29092"})
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": kafkaHost + ":" + kafkaPort})
 
 	if err != nil {
 		fmt.Printf("Failed to create producer: %s\n", err)
