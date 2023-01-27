@@ -11,9 +11,6 @@ import (
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	//"github.com/confluentinc/confluent-kafka-go/schemaregistry"
-	//"github.com/confluentinc/confluent-kafka-go/schemaregistry/serde"
-	//"github.com/confluentinc/confluent-kafka-go/schemaregistry/serde/jsonschema"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -309,7 +306,6 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SubmitOrder() {
-	//url := "http://localhost:8081"
 	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:29092"})
 
 	if err != nil {
@@ -318,20 +314,6 @@ func SubmitOrder() {
 
 	fmt.Printf("Created Producer %v\n", p)
 
-	//client, err := schemaregistry.NewClient(schemaregistry.NewConfig(url))
-
-	//if err != nil {
-	//	fmt.Printf("Failed to create schema registry client: %s\n", err)
-	//}
-
-	//ser, err := jsonschema.NewSerializer(client, serde.ValueSerde, jsonschema.NewSerializerConfig())
-
-	//if err != nil {
-	//	fmt.Printf("Failed to create serializer: %s\n", err)
-	//}
-
-	// Optional delivery channel, if not specified the Producer object's
-	// .Events channel is used.
 	deliveryChan := make(chan kafka.Event)
 
 	// Produce messages to topic (asynchronously)
@@ -350,13 +332,6 @@ func SubmitOrder() {
 
 	//testing
 	payload, err := json.Marshal(msg)
-
-	//end testing
-
-	//payload, err := ser.Serialize(topic, &msg)
-	//if err != nil {
-	//	fmt.Printf("Failed to serialize payload: %s\n", err)
-	//}
 
 	err = p.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
