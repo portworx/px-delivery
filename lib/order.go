@@ -190,7 +190,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 			t.Execute(w, nil)
 		} else {
 			fmt.Printf("should allow order")
-			t, _ := template.ParseFiles("./static/centralperk_order.html")
+			t, _ := template.ParseFiles("./static/pxbbq_order.html")
 			t.Execute(w, nil)
 		}
 	} else {
@@ -207,6 +207,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		side1 := r.FormValue("side1")
 		side2 := r.FormValue("side2")
 		drink := r.FormValue("drink")
+		restaurant := r.FormValue("restaurant")
 
 		//retrieve address from customer's account
 		myAddress := GetAddress(email)
@@ -220,7 +221,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
 		fmt.Println(session.Values["email"].(string))
-		fmt.Println("Order Taken by Portworx BBQ")
+		fmt.Println("Order Taken by :" + restaurant)
 		fmt.Println("Ordered : " + main)
 		fmt.Println("Ordered : " + side1)
 		fmt.Println("Ordered : " + side2)
@@ -233,7 +234,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		SubmitOrder(orderNum, orderDate, email, "PXBBQ", main, side1, side2, drink, street1, street2, city, state, zipcode)
+		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
@@ -275,6 +276,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		side1 := r.FormValue("side1")
 		side2 := r.FormValue("side2")
 		drink := r.FormValue("drink")
+		restaurant := r.FormValue("restaurant")
 
 		//retrieve address from customer's account
 		myAddress := GetAddress(email)
@@ -288,7 +290,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
 		fmt.Println(session.Values["email"].(string))
-		fmt.Println("Order Taken by McDowells")
+		fmt.Println("Order Taken by :" + restaurant)
 		fmt.Println("Ordered : " + main)
 		fmt.Println("Ordered : " + side1)
 		fmt.Println("Ordered : " + side2)
@@ -301,7 +303,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		SubmitOrder(orderNum, orderDate, email, "McDowells", main, side1, side2, drink, street1, street2, city, state, zipcode)
+		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
@@ -343,6 +345,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		side1 := r.FormValue("side1")
 		side2 := r.FormValue("side2")
 		drink := r.FormValue("drink")
+		restaurant := r.FormValue("restaurant")
 
 		//retrieve address from customer's account
 		myAddress := GetAddress(email)
@@ -356,7 +359,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
 		fmt.Println(session.Values["email"].(string))
-		fmt.Println("Order Taken by Central Perk")
+		fmt.Println("Order Taken by : " + restaurant)
 		fmt.Println("Ordered : " + main)
 		fmt.Println("Ordered : " + side1)
 		fmt.Println("Ordered : " + side2)
@@ -369,7 +372,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		SubmitOrder(orderNum, orderDate, email, "Central Perk", main, side1, side2, drink, street1, street2, city, state, zipcode)
+		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
