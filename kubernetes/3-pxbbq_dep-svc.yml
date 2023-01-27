@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment                 
 metadata:
-  name: pxbbq-web  
-  namespace: pxbbq         
+  name: pxdeliver  
+  namespace: px-delivery         
 spec:
   replicas: 3                    
   selector:
     matchLabels:
-      app: pxbbq-web
+      app: pxdeliver-web
   template:                      
     metadata:
       labels:                    
-        app: pxbbq-web
+        app: pxdeliver-web
     spec:                        
       containers:
-      - name: pxbbq-web
-        image: eshanks16/pxbbq:v2.1
+      - name: pxdeliver-web
+        image: eshanks16/pxdeliver:v0.1
         env:
         - name: MONGO_HOST
           value: "mongo"
@@ -50,14 +50,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pxbbq-svc
-  namespace: pxbbq
+  name: pxdeliver-svc
+  namespace: px-delivery
   labels:
-    app: pxbbq-web
+    app: pxdeliver-web
 spec:
   ports:
   - port: 80
     targetPort: 8080
   type: LoadBalancer
   selector:
-    app: pxbbq-web
+    app: pxdeliver-web

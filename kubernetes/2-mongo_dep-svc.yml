@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: mongo
     app.kubernetes.io/component: backend
-  namespace: pxbbq
+  namespace: px-delivery
 spec:
   selector:
     matchLabels:
@@ -44,7 +44,7 @@ metadata:
   labels:
     app.kubernetes.io/name: mongo
     app.kubernetes.io/component: backend
-  namespace: pxbbq
+  namespace: px-delivery
 spec:
   ports:
   - port: 27017
