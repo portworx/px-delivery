@@ -222,7 +222,7 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 
 	//SubmitOrder()
 
-	GetAddress("bart@test.com")
+	MyOrderHistory("bart@test.com")
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {

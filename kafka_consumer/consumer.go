@@ -38,7 +38,7 @@ func ErrorCheck(err error) {
 func writeToDB(payload Data) {
 
 	//open connection to mysql
-	db, err := sql.Open("mysql", "root:porxie@tcp(127.0.0.1:3306)/")
+	db, err := sql.Open("mysql", "root:porxie@tcp(127.0.0.1:3306)/") //TODO CHANGE HARD CODING
 	if err != nil {
 		panic(err.Error())
 	}

@@ -2,6 +2,7 @@ package lib
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -12,6 +13,7 @@ import (
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	_ "github.com/go-sql-driver/mysql"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -28,6 +30,16 @@ type Order struct {
 	Side2       string `bson:"side2,omitempty"`
 	Drink       string `bson:"drink,omitempty"`
 	OrderStatus string `bson:"orderstatus,omitempty"`
+}
+
+type PastOrders struct {
+	OrderId    int
+	Main       string
+	Side1      string
+	Side2      string
+	Drink      string
+	Restaurant string
+	Date       string
 }
 
 type PxOrder struct {
@@ -49,7 +61,7 @@ type PxOrder struct {
 
 type myOrderData struct {
 	PageTitle string
-	Orders    []Order
+	Orders    []PastOrders
 }
 
 func generateOrderID() int {
@@ -160,7 +172,8 @@ func MyOrderHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(session.Values["email"])
 	email := session.Values["email"].(string)
 
-	myOrders := GetMyOrders(email)
+	//myOrders := GetMyOrders(email)
+	myOrders := MyOrderHistory(email)
 
 	data := myOrderData{
 		PageTitle: "My Order History",
@@ -444,4 +457,43 @@ func SubmitOrder(orderNum int, orderDate string, email string, restaurant string
 	}
 
 	close(deliveryChan)
+}
+
+func MyOrderHistory(email string) []PastOrders {
+	fmt.Println("############# Executing Function myOrderHistory ##############")
+	db, err := sql.Open("mysql", "root:porxie@/delivery") //TODO CHANGE HARD CODING
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
+
+	rows, err := db.Query("select orderid, main, side1, side2, drink, restaurant, date from orders where email = 'bart@test.com'")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var myOrders []PastOrders
+
+	for rows.Next() {
+		var order PastOrders
+		if err != nil {
+			fmt.Println("Cannot push row into array")
+		}
+		//myOrders = append(myOrders, order)
+		err := rows.Scan(&order.OrderId, &order.Main, &order.Side1, &order.Side2, &order.Drink, &order.Restaurant, &order.Date)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			myOrders = append(myOrders, order)
+
+			fmt.Println("ATTEMPTING TO PRINT FROM STRUCT AS A TEST")
+			fmt.Println(order)
+		}
+
+	}
+
+	return (myOrders)
 }
