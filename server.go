@@ -58,7 +58,7 @@ func main() {
 	http.HandleFunc("/logout", lib.LogoutHandler)     //used
 	http.HandleFunc("/register", lib.RegisterHandler) //used
 	http.HandleFunc("/redirect_login", lib.OrderLoginHandler)
-	http.HandleFunc("/myorders", lib.MyOrderHandler)                   //used
+	http.HandleFunc("/order_history", lib.MyOrderHandler)              //used
 	http.HandleFunc("/test", lib.TestHandler)                          //used for testing
 	http.HandleFunc("/contact", lib.ContactHandler)                    //used
 	http.HandleFunc("/order", lib.OrderHandler)                        //general order page where you select restaurants

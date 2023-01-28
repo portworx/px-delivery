@@ -180,7 +180,7 @@ func MyOrderHandler(w http.ResponseWriter, r *http.Request) {
 		Orders:    myOrders,
 	}
 
-	t, _ := template.ParseFiles("./static/myorders.html")
+	t, _ := template.ParseFiles("./static/order_history.html")
 	t.Execute(w, data)
 
 }

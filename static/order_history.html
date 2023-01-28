@@ -96,6 +96,8 @@
               <table class="table" width="50" border="1">
                 <tr>
                   <th>"Order ID"</th>
+                  <th>"Date"</th>
+                  <th>"Restaurant"</th>
                   <th>"Main Dish"</th>
                   <th>"Side Dish 1"</th>
                   <th>"Side Dish 2"</th>
@@ -104,6 +106,8 @@
                 {{ range .Orders }}
                 <tr>
                   <td>{{ .OrderId }}</td>
+                  <td>{{ .Date }}</td>
+                  <td>{{.Restaurant }}</td>
                   <td>{{ .Main }}</td>
                   <td>{{ .Side1 }}</td>
                   <td>{{ .Side2 }}</td>
