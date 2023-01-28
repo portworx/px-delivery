@@ -464,7 +464,6 @@ func SubmitOrder(orderNum int, orderDate string, email string, restaurant string
 }
 
 func MyOrderHistory(email string) []PastOrders {
-	fmt.Println("############# Executing Function myOrderHistory ##############")
 	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
 	//fmt.Println("DSN is : " + dsn)
 	db, err := sql.Open("mysql", dsn)
