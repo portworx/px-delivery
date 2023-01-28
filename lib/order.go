@@ -20,6 +20,10 @@ import (
 var (
 	kafkaHost string = os.Getenv("KAFKA_HOST")
 	kafkaPort string = os.Getenv("KAFKA_PORT")
+	mysqlHost string = os.Getenv("MYSQL_HOST")
+	mysqlUser string = os.Getenv("MYSQL_USER")
+	mysqlPass string = os.Getenv("MYSQL_PASS")
+	mysqlPort string = os.Getenv("MYSQL_PORT")
 )
 
 type Order struct {
@@ -461,7 +465,9 @@ func SubmitOrder(orderNum int, orderDate string, email string, restaurant string
 
 func MyOrderHistory(email string) []PastOrders {
 	fmt.Println("############# Executing Function myOrderHistory ##############")
-	db, err := sql.Open("mysql", "root:porxie@/delivery") //TODO CHANGE HARD CODING
+	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
+	//fmt.Println("DSN is : " + dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}

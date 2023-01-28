@@ -2,9 +2,11 @@ package lib
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 
+	_ "github.com/go-sql-driver/mysql"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -23,7 +25,7 @@ func getMongoClient(mongoHost string, mongoUser string, mongoPass string, mongoT
 	}
 
 	clientOptions := options.Client().ApplyURI("mongodb://" + mongoUser + ":" + mongoPass + "@" + mongoHost + ":27017" + certString)
-	fmt.Println("Connection String is: " + "mongodb://" + mongoUser + ":" + mongoPass + "@" + mongoHost + ":27017" + certString)
+	//fmt.Println("Connection String is: " + "mongodb://" + mongoUser + ":" + mongoPass + "@" + mongoHost + ":27017" + certString)
 
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 
@@ -40,4 +42,14 @@ func MongoCheck(mongoHost string, mongoUser string, mongoPass string, mongoTLS s
 		log.Fatal(err)
 	}
 	fmt.Println("Connected to MongoDB!")
+}
+
+func MysqlCheck(mysqlHost string, mysqlUser string, mysqlPass string, mysqlPort string) {
+	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
+	_, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("Connected to MySQL!")
+	}
 }

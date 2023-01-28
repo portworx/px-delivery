@@ -38,11 +38,17 @@ var (
 	mongoTLS    string = os.Getenv("MONGO_TLS")
 	kafkaHost   string = os.Getenv("KAFKA_HOST")
 	kafkaPort   string = os.Getenv("KAFKA_PORT")
+	mysqlHost   string = os.Getenv("MYSQL_HOST")
+	mysqlUser   string = os.Getenv("MYSQL_User")
+	mysqlPass   string = os.Getenv("MYSQL_PASS")
+	mysqlPort   string = os.Getenv("MYSQL_User")
 )
 
 func main() {
-	// check DB Connection on startup
+	// check DB Connections on startup
 	lib.MongoCheck(mongoHost, mongoUser, mongoPass, mongoTLS)
+	//lib.KafkaCheck(kafkaHost, kafkaPort)
+	lib.MysqlCheck(mysqlHost, mysqlUser, mysqlPass, mysqlPort)
 
 	//web
 	fileServer := http.FileServer(http.Dir("./static"))
