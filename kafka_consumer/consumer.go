@@ -12,6 +12,15 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+var (
+	kafkaHost string = os.Getenv("KAFKA_HOST")
+	kafkaPort string = os.Getenv("KAFKA_PORT")
+	mysqlHost string = os.Getenv("MYSQL_HOST")
+	mysqlUser string = os.Getenv("MYSQL_USER")
+	mysqlPass string = os.Getenv("MYSQL_PASS")
+	mysqlPort string = os.Getenv("MYSQL_PORT")
+)
+
 type Data struct {
 	OrderId     int
 	Email       string
@@ -37,8 +46,9 @@ func ErrorCheck(err error) {
 
 func writeToDB(payload Data) {
 
-	//open connection to mysql
-	db, err := sql.Open("mysql", "root:porxie@tcp(127.0.0.1:3306)/") //TODO CHANGE HARD CODING
+	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
+	fmt.Println("DSN is : " + dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -74,11 +84,6 @@ func writeToDB(payload Data) {
 }
 
 func main() {
-
-	var (
-		kafkaHost string = os.Getenv("KAFKA_HOST")
-		kafkaPort string = os.Getenv("KAFKA_PORT")
-	)
 
 	conf := kafka.ReaderConfig{
 		Brokers:  []string{kafkaHost + ":" + kafkaPort},

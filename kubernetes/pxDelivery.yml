@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment                 
 metadata:
-  name: pxdeliver  
+  name: pxdelivery  
   namespace: px-delivery         
 spec:
-  replicas: 3                    
+  replicas: 1                    
   selector:
     matchLabels:
-      app: pxdeliver-web
+      app: pxdelivery-web
   template:                      
     metadata:
       labels:                    
-        app: pxdeliver-web
+        app: pxdelivery-web
     spec:                        
       containers:
-      - name: pxdeliver-web
-        image: eshanks16/pxdeliver:v0.1
+      - name: pxdelivery-web
+        image: eshanks16/pxdelivery:v1
         env:
         - name: MONGO_HOST
           value: "mongo"
@@ -28,6 +28,16 @@ spec:
           value: "porxie"
         - name: MONGO_TLS
           value: ""
+        - name: KAFKA_HOST
+          value: "kafka"
+        - name KAFKA_PORT
+          value: "9092"
+        - name MYSQL_HOST
+          value: "mysql"
+        - name MYSQL_USER
+          value: "root"
+        - name MYSQL_PASS
+          value: "3306"
         imagePullPolicy: Always
         ports:
           - containerPort: 8080  
@@ -50,14 +60,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pxdeliver-svc
+  name: pxdelivery-svc
   namespace: px-delivery
   labels:
-    app: pxdeliver-web
+    app: pxdelivery-web
 spec:
   ports:
   - port: 80
     targetPort: 8080
   type: LoadBalancer
   selector:
-    app: pxdeliver-web
+    app: pxdelivery-web

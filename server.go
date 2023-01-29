@@ -39,9 +39,9 @@ var (
 	kafkaHost   string = os.Getenv("KAFKA_HOST")
 	kafkaPort   string = os.Getenv("KAFKA_PORT")
 	mysqlHost   string = os.Getenv("MYSQL_HOST")
-	mysqlUser   string = os.Getenv("MYSQL_User")
+	mysqlUser   string = os.Getenv("MYSQL_USER")
 	mysqlPass   string = os.Getenv("MYSQL_PASS")
-	mysqlPort   string = os.Getenv("MYSQL_User")
+	mysqlPort   string = os.Getenv("MYSQL_PORT")
 )
 
 func main() {

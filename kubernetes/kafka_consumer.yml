@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment                 
+metadata:
+  name: kafka_consumer  
+  namespace: px-delivery         
+spec:
+  replicas: 1                    
+  selector:
+    matchLabels:
+      app: kafka_consumer
+  template:                      
+    metadata:
+      labels:                    
+        app: kafka_consumer
+    spec:                        
+      containers:
+      - name: consumer
+        image: eshanks16/kafka_consumer:v1
+        env:
+        - name: KAFKA_HOST
+          value: "kafka"
+        - name: KAFKA_PORT
+          value: "9092"
+        - name: MYSQL_HOST
+          value: mysql
+        - name: MYSQL_USER
+          value: "root"
+        - name: MYSQL_PASS
+          value: "porxie"
+        - name: MYSQL_PORT
+          value: "3306"
+        imagePullPolicy: Always 
