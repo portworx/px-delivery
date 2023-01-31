@@ -473,7 +473,7 @@ func MyOrderHistory(email string) []PastOrders {
 
 	defer db.Close()
 
-	rows, err := db.Query("select orderid, main, side1, side2, drink, restaurant, date from orders where email = 'bart@test.com'")
+	rows, err := db.Query("select orderid, main, side1, side2, drink, restaurant, date from orders where email = " + "'" + email + "'")
 	if err != nil {
 		log.Fatal(err)
 	}

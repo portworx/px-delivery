@@ -36,6 +36,13 @@ spec:
             memory: 100Mi
         ports:
         - containerPort: 27017
+        volumeMounts:
+        - name: mongo-persistent-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongo-persistent-storage
+        persistentVolumeClaim:
+          claimName: mongo-pv-claim
 ---
 apiVersion: v1
 kind: Service

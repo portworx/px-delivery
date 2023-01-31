@@ -29,14 +29,20 @@ spec:
         - name: MONGO_TLS
           value: ""
         - name: KAFKA_HOST
-          value: "kafka"
-        - name KAFKA_PORT
+          value: "my-release-kafka-headless"
+        - name: KAFKA_USER
+          value: pds
+        - name: KAFKA_PASS
+          value: "crQ6dWd8jn6KZL66YB4srovCKsYI5opqXWyUp919"
+        - name: KAFKA_PORT
           value: "9092"
-        - name MYSQL_HOST
+        - name: MYSQL_HOST
           value: "mysql"
-        - name MYSQL_USER
+        - name: MYSQL_USER
           value: "root"
-        - name MYSQL_PASS
+        - name: MYSQL_PASS
+          value: "porxie"
+        - name: MYSQL_PORT
           value: "3306"
         imagePullPolicy: Always
         ports:

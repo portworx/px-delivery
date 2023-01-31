@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment                 
 metadata:
-  name: kafka_consumer  
+  name: kafka-consumer  
   namespace: px-delivery         
 spec:
   replicas: 1                    
@@ -19,11 +19,15 @@ spec:
         image: eshanks16/kafka_consumer:v1
         env:
         - name: KAFKA_HOST
-          value: "kafka"
+          value: "my-release-kafka-headless"
+        - name: KAFKA_USER
+          value: pds
+        - name: KAFKA_PASS
+          value: "crQ6dWd8jn6KZL66YB4srovCKsYI5opqXWyUp919"
         - name: KAFKA_PORT
           value: "9092"
         - name: MYSQL_HOST
-          value: mysql
+          value: "mysql"
         - name: MYSQL_USER
           value: "root"
         - name: MYSQL_PASS

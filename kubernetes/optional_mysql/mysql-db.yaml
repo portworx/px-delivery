@@ -1,33 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: px-delivery
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
-  labels:
-    app.kubernetes.io/name: mysql
-    app.kubernetes.io/component: backend
-  namespace: pxdelivery
+  namespace: px-delivery
 spec:
   selector:
     matchLabels:
       app: mysql
-      app.kubernetes.io/component: backend
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         app: mysql
-        app.kubernetes.io/component: backend
     spec:
       containers:
-      - image: mysql:5.6
+      - image: mysql
         name: mysql
         env:
+          # Use secret in real usage
         - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: password
+          value: porxie
         ports:
         - containerPort: 3306
           name: mysql
@@ -38,14 +43,3 @@ spec:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pv-claim
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql
-  namespace: pxdelivery
-spec:
-  ports:
-  - port: 3306
-  selector:
-    app: mysql

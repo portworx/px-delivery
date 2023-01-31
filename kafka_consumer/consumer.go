@@ -58,7 +58,7 @@ func writeToDB(payload Data) {
 	_, err = db.Exec("USE delivery")
 	if err != nil {
 		// Create database if it doesn't exist
-		_, err = db.Exec("CREATE DATABASE delivery")
+		_, err = db.Exec("CREATE DATABASE delivery;")
 		if err != nil {
 			println("Delivery database exists")
 		}

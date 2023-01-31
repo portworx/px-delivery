@@ -59,7 +59,7 @@ type authData struct {
 func GetAddress(email string) Address {
 	fmt.Println("#############Executing Function GetAddress##############")
 	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	collection := client.Database("porxbbq").Collection("registrations")
+	collection := client.Database("pxdelivery").Collection("registrations")
 
 	filter := bson.D{{"email", email}}
 
@@ -107,7 +107,7 @@ func hashAndSalt(pwd []byte) string {
 
 func registerUser(firstname string, lastname string, email string, password string, street1 string, street2 string, city string, state string, zipcode string) {
 	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	collection := client.Database("porxbbq").Collection("registrations")
+	collection := client.Database("pxdelivery").Collection("registrations")
 
 	password = hashAndSalt([]byte(password))
 	//fmt.Println(password)
@@ -146,7 +146,7 @@ func loginopstatus(w http.ResponseWriter, r *http.Request, messageData PageData)
 }
 func checkLoyalist(email string) (found bool) {
 	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	collection := client.Database("porxbbq").Collection("registrations")
+	collection := client.Database("pxdelivery").Collection("registrations")
 	emailFilter := bson.D{{"email", email}}
 
 	var result Loyalist
@@ -163,7 +163,7 @@ func checkLoyalist(email string) (found bool) {
 
 func checkCredentials(email string, password string) (access bool) {
 	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	collection := client.Database("porxbbq").Collection("registrations")
+	collection := client.Database("pxdelivery").Collection("registrations")
 
 	//convert plain text password to hash and compare with existing hash values
 	passwordBytes := []byte(password)
@@ -236,7 +236,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		if found == true {
 			statusData := PageData{
 				PageTitle: "Registration Status",
-				Message:   "This Hard Topper has already been registered in the loyalty program!",
+				Message:   "You have already been added to our Delivery Service",
 			}
 			//Display Operation Status Page to User
 			opstatus(w, r, statusData)
@@ -244,7 +244,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			r.ParseForm()
 			statusData := PageData{
 				PageTitle: "Registration Status",
-				Message:   "The email address " + r.FormValue("email") + " has been registered into the Loyalty Program!",
+				Message:   "The email address " + r.FormValue("email") + " has been registered into the Delivery Service!",
 			}
 
 			//write to mongo
@@ -331,7 +331,7 @@ func OrderLoginHandler(w http.ResponseWriter, r *http.Request) {
 				fmt.Println("Access Granted")
 				statusData := PageData{
 					PageTitle: "Login Status",
-					Message:   "You are now logged in to the Loyalty Program",
+					Message:   "You are now logged in to the Delivery Service",
 				}
 				session.Values["authenticated"] = true
 				session.Values["email"] = r.FormValue("email")
