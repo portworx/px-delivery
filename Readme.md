@@ -1,7 +1,7 @@
 # Portworx Delivery (Food Delivery) Demo App
 
 ## Purpose:
-The Portworx Delivery App is useful for demonstrating Portworc Data Services where you need many different data services for your application to run correctly. 
+The Portworx Delivery App is useful for demonstrating Portworx Data Services where you need many different data services for your application to run correctly. 
 
 This application consists of a web application running golang. The Authentication system for the food ordering site, uses a MongoDB database. The ordering system submits orders to a Kafka queue where presumably many consumers would be reading this data. One of the consumers also written in golang will pull this data from kafka and push it into a mysql database. The golang web application performs reads from the mysql database. This pattern makes writes eventually consistent.
 
