@@ -18,16 +18,16 @@ spec:
       - name: pxdelivery-web
         image: eshanks16/pxdelivery:v1
         env:
+        - name: MONGO_INIT_USER
+          value: ""
+        - name: MONGO_INIT_PASS
+          value: ""
         - name: MONGO_HOST
           value: "mongo"
         - name: MONGO_PORT
           value: "27017"
-        - name: MONGO_USER
-          value: porxie
-        - name: MONGO_PASS
-          value: "porxie"
         - name: MONGO_TLS
-          value: ""
+          value: "" # Should be empty set unless using AWS DocumentDB
         - name: KAFKA_HOST
           value: "my-release-kafka-headless"
         - name: KAFKA_USER

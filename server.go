@@ -33,8 +33,8 @@ var (
 	clientError error
 	certString  string = ""
 	mongoHost   string = os.Getenv("MONGO_HOST")
-	mongoUser   string = os.Getenv("MONGO_USER")
-	mongoPass   string = os.Getenv("MONGO_PASS")
+	mongoUser   string = "porxie" //os.Getenv("MONGO_USER")
+	mongoPass   string = "porxie" //os.Getenv("MONGO_PASS")
 	mongoTLS    string = os.Getenv("MONGO_TLS")
 	kafkaHost   string = os.Getenv("KAFKA_HOST")
 	kafkaPort   string = os.Getenv("KAFKA_PORT")
