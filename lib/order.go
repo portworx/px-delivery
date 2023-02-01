@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -14,7 +13,6 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	_ "github.com/go-sql-driver/mysql"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
@@ -74,42 +72,6 @@ func generateOrderID() int {
 	return (orderId)
 }
 
-func GetMyOrders(email string) []Order {
-	fmt.Println("#############Executing Function GetMyOrders##############")
-	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	collection := client.Database("porxbbq").Collection("orders")
-
-	filter := bson.D{{"email", email}}
-
-	var myOrders []Order
-
-	cursor, err := collection.Find(context.TODO(), filter)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err = cursor.All(context.TODO(), &myOrders); err != nil {
-		log.Fatal(err)
-	}
-
-	return (myOrders)
-
-}
-
-func registerOrder(orderNum int, email string, main string, side1 string, side2 string, drink string) {
-	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	collection := client.Database("porxbbq").Collection("orders")
-
-	//fmt.Println(email)
-	entry := Order{orderNum, email, main, side1, side2, drink, "preparing"}
-
-	insertResult, err := collection.InsertOne(context.TODO(), entry)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Inserted a Single Document: ", insertResult.InsertedID)
-
-}
-
 func orderStatus(w http.ResponseWriter, r *http.Request, messageData PageData) {
 	fmt.Println("method:", r.Method, "on URL:", r.URL)
 	session, _ := store.Get(r, "cookie-name")
@@ -129,7 +91,7 @@ func OrderHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(session.Values["email"])
 	fmt.Println(r.Method)
 	//generate Order ID
-	orderNum := generateOrderID()
+	//orderNum := generateOrderID()
 
 	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
 		fmt.Println("Not Authenticated")
@@ -147,26 +109,6 @@ func OrderHandler(w http.ResponseWriter, r *http.Request) {
 			t, _ := template.ParseFiles("./static/order.html")
 			t.Execute(w, nil)
 		}
-	} else {
-		r.ParseForm()
-		statusData := PageData{
-			PageTitle: "Order Status",
-			Message:   fmt.Sprintf("Your order has been received. Order number %v", orderNum),
-		}
-
-		//write to mongo
-		fmt.Printf("Order submitted by: ")
-		fmt.Println(session.Values["email"].(string))
-		email := session.Values["email"].(string)
-		main := r.FormValue("main")
-		side1 := r.FormValue("side1")
-		side2 := r.FormValue("side2")
-		drink := r.FormValue("drink")
-
-		registerOrder(orderNum, email, main, side1, side2, drink)
-
-		//Display Operation Status Page to User
-		orderStatus(w, r, statusData)
 	}
 }
 
