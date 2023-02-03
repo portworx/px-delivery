@@ -19,11 +19,11 @@ spec:
         image: eshanks16/kafka_consumer:v1
         env:
           - name: KAFKA_HOST
-            value: my-release-kafka-headless
+            value: kf-kafka-nh8epu-px-delivery-0-vip
           - name: KAFKA_USER
             value: pds
           - name: KAFKA_PASS
-            value: crQ6dWd8jn6KZL66YB4srovCKsYI5opqXWyUp919
+            value: "44wNYrLa3q8UBKVrw8Jdfoh9JmPB3fX5HRO7I0OU"
           - name: KAFKA_PORT
             value: "9092"
           - name: MYSQL_HOST

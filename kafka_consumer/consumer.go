@@ -7,18 +7,25 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/segmentio/kafka-go"
+
+	"github.com/segmentio/kafka-go/sasl/plain"
 )
 
 var (
-	kafkaHost string = os.Getenv("KAFKA_HOST")
-	kafkaPort string = os.Getenv("KAFKA_PORT")
-	mysqlHost string = os.Getenv("MYSQL_HOST")
-	mysqlUser string = os.Getenv("MYSQL_USER")
-	mysqlPass string = os.Getenv("MYSQL_PASS")
-	mysqlPort string = os.Getenv("MYSQL_PORT")
+	kafkaHost     string = os.Getenv("KAFKA_HOST")
+	kafkaPort     string = os.Getenv("KAFKA_PORT")
+	kafkaUser     string = os.Getenv("KAFKA_USER")
+	kafkaPass     string = os.Getenv("KAFKA_PASS")
+	mysqlHost     string = os.Getenv("MYSQL_HOST")
+	mysqlUser     string = os.Getenv("MYSQL_USER")
+	mysqlPass     string = os.Getenv("MYSQL_PASS")
+	mysqlPort     string = os.Getenv("MYSQL_PORT")
+	mysqlInitUser string = os.Getenv("MYSQL_INIT_USER")
+	mysqlInitPass string = os.Getenv("MYSQL_INIT_PASS")
 )
 
 type Data struct {
@@ -42,6 +49,44 @@ func ErrorCheck(err error) {
 	if err != nil {
 		panic(err.Error())
 	}
+}
+
+func initMySQL(mysqlInitUser string, mysqlInitPass string, mysqlUser string, mysqlPass string) {
+	dsn := mysqlInitUser + ":" + mysqlInitPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/"
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer db.Close()
+
+	// create database
+	fmt.Println("Creating Database")
+	_, err = db.Exec("CREATE DATABASE delivery")
+	if err != nil {
+		fmt.Println(err)
+		//return
+	}
+
+	// create user with administrative rights to the new database
+	fmt.Println("Creating MySQL User")
+	//OLD MAYBE DELETE ########## query := fmt.Sprintf("GRANT ALL PRIVILEGES ON delivery.* TO '%s'@'%%' IDENTIFIED BY '%s'", mysqlUser, mysqlPass)
+	query := fmt.Sprintf("CREATE USER '%s'@'%%' IDENTIFIED BY '%s'", mysqlUser, mysqlPass)
+	fmt.Println(query)
+	_, err = db.Exec(query)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Creating MYSQL Permissions")
+	query = fmt.Sprintf("GRANT ALL PRIVILEGES ON delivery.* TO '%s'@'%%';", mysqlUser)
+	fmt.Println(query)
+	_, err = db.Exec(query)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return
 }
 
 func writeToDB(payload Data) {
@@ -83,15 +128,63 @@ func writeToDB(payload Data) {
 	fmt.Printf("The last inserted row id: %d\n", lastId)
 }
 
+func checkDBExists(db *sql.DB, dbName string) bool {
+	fmt.Println("Checking to see if " + dbName + " database exists")
+	query := "SHOW DATABASES LIKE " + "'" + dbName + "'" + ";"
+	fmt.Println("DB Check Query : " + query)
+	rows, err := db.Query(query)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	if rows != nil {
+		fmt.Println("ROWS Not NIL")
+		return true
+	}
+	defer rows.Close()
+	return false
+
+}
+
 func main() {
+
+	//Check to see if the MYSQL Connection is working, if it is not, initialize our database
+	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
+	fmt.Println("Testing DSN : " + dsn)
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		fmt.Println("There was an error connecting to the delivery database")
+		fmt.Println(err)
+	}
+	defer db.Close()
+
+	if !checkDBExists(db, "delivery") {
+		fmt.Println("Database Connection Failed")
+		//initialize mysql
+		initMySQL(mysqlInitUser, mysqlInitPass, mysqlUser, mysqlPass)
+	}
+
+	//begin Kafka Reading
+	mechanism := plain.Mechanism{
+		Username: kafkaUser,
+		Password: kafkaPass,
+	}
+
+	dialer := &kafka.Dialer{
+		Timeout:       10 * time.Second,
+		DualStack:     true,
+		SASLMechanism: mechanism,
+	}
 
 	conf := kafka.ReaderConfig{
 		Brokers:  []string{kafkaHost + ":" + kafkaPort},
 		Topic:    "order",
 		GroupID:  "g1",
 		MaxBytes: 10,
+		Dialer:   dialer,
 	}
 
+	fmt.Println("### Starting the Kafka Consumer ###")
 	reader := kafka.NewReader(conf)
 
 	for {

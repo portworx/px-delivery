@@ -7,6 +7,9 @@ import (
 )
 
 func KafkaCheck(KafkaHost string, KafkaPort string) {
+
+	//begin Kafka Reading
+
 	_, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": kafkaHost + ":" + kafkaPort})
 	if err != nil {
 		panic(err)

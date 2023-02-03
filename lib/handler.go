@@ -47,8 +47,6 @@ var (
 	key              = []byte("kefue-secret-198")
 	store            = sessions.NewCookieStore(key)
 	mongoHost string = os.Getenv("MONGO_HOST")
-	mongoUser string = os.Getenv("MONGO_USER")
-	mongoPass string = os.Getenv("MONGO_PASS")
 	mongoTLS  string = os.Getenv("MONGO_TLS")
 )
 

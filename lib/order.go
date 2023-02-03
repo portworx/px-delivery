@@ -18,6 +18,8 @@ import (
 var (
 	kafkaHost string = os.Getenv("KAFKA_HOST")
 	kafkaPort string = os.Getenv("KAFKA_PORT")
+	kafkaUser string = os.Getenv("KAFKA_USER")
+	kafkaPass string = os.Getenv("KAFKA_PASS")
 	mysqlHost string = os.Getenv("MYSQL_HOST")
 	mysqlUser string = os.Getenv("MYSQL_USER")
 	mysqlPass string = os.Getenv("MYSQL_PASS")
@@ -352,7 +354,15 @@ func SubmitOrder(orderNum int, orderDate string, email string, restaurant string
 	//fmt.Println("#########")
 
 	//create a kafka producer - connection variables come from environment variables KAFKA_HOST and KAFKA_PORT
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": kafkaHost + ":" + kafkaPort})
+	config := &kafka.ConfigMap{
+		"bootstrap.servers": kafkaHost + ":" + kafkaPort,
+		"sasl.username":     kafkaUser,
+		"sasl.password":     kafkaPass,
+		"security.protocol": "SASL_PLAINTEXT",
+		"sasl.mechanisms":   "PLAIN",
+	}
+
+	p, err := kafka.NewProducer(config)
 	if err != nil {
 		fmt.Printf("Failed to create producer: %s\n", err)
 	}

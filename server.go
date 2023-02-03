@@ -33,8 +33,6 @@ var (
 	clientError error
 	certString  string = ""
 	mongoHost   string = os.Getenv("MONGO_HOST")
-	mongoUser   string = "porxie" //os.Getenv("MONGO_USER")
-	mongoPass   string = "porxie" //os.Getenv("MONGO_PASS")
 	mongoTLS    string = os.Getenv("MONGO_TLS")
 	kafkaHost   string = os.Getenv("KAFKA_HOST")
 	kafkaPort   string = os.Getenv("KAFKA_PORT")
@@ -46,27 +44,24 @@ var (
 
 func main() {
 	// check DB Connections on startup
-	lib.MongoCheck(mongoHost, mongoUser, mongoPass, mongoTLS)
-	//lib.KafkaCheck(kafkaHost, kafkaPort)
-	lib.MysqlCheck(mysqlHost, mysqlUser, mysqlPass, mysqlPort)
+	lib.DbCheck()
 
 	//web
 	fileServer := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fileServer)
-	//http.HandleFunc("/", lib.TestHandler)
 	http.HandleFunc("/loyalty", func(w http.ResponseWriter, r *http.Request) {
 		r.URL.Path += ".html"
 		fileServer.ServeHTTP(w, r)
 	})
-	http.HandleFunc("/healthz", lib.HealthHandler)    //used
-	http.Handle("/metrics", promhttp.Handler())       //used
-	http.HandleFunc("/login", lib.LoginHandler)       //used
-	http.HandleFunc("/logout", lib.LogoutHandler)     //used
-	http.HandleFunc("/register", lib.RegisterHandler) //used
+	http.HandleFunc("/healthz", lib.HealthHandler)
+	http.Handle("/metrics", promhttp.Handler())
+	http.HandleFunc("/login", lib.LoginHandler)
+	http.HandleFunc("/logout", lib.LogoutHandler)
+	http.HandleFunc("/register", lib.RegisterHandler)
 	http.HandleFunc("/redirect_login", lib.OrderLoginHandler)
-	http.HandleFunc("/order_history", lib.MyOrderHandler)              //used
-	http.HandleFunc("/test", lib.TestHandler)                          //used for testing
-	http.HandleFunc("/contact", lib.ContactHandler)                    //used
+	http.HandleFunc("/order_history", lib.MyOrderHandler)
+	http.HandleFunc("/test", lib.TestHandler) //used for testing
+	http.HandleFunc("/contact", lib.ContactHandler)
 	http.HandleFunc("/order", lib.OrderHandler)                        //general order page where you select restaurants
 	http.HandleFunc("/pxbbq_order", lib.PxbbqOrderHandler)             //Store Ordering
 	http.HandleFunc("/mcd_order", lib.McdOrderHandler)                 //Store Ordering

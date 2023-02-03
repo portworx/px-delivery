@@ -19,21 +19,21 @@ spec:
         image: eshanks16/pxdelivery:v1
         env:
         - name: MONGO_INIT_USER
-          value: ""
+          value: "pds"
         - name: MONGO_INIT_PASS
-          value: ""
+          value: "R7GPT5d1Eh519g9ujbPrjFQti3lEU3TewACCsF8Z"
         - name: MONGO_HOST
-          value: "mongo"
+          value: "mdb-mongo2-mwzsdi-px-delivery-0-vip"
         - name: MONGO_PORT
           value: "27017"
         - name: MONGO_TLS
           value: "" # Should be empty set unless using AWS DocumentDB
         - name: KAFKA_HOST
-          value: "my-release-kafka-headless"
+          value: "kf-kafka-nh8epu-px-delivery-0-vip"
         - name: KAFKA_USER
           value: pds
         - name: KAFKA_PASS
-          value: "crQ6dWd8jn6KZL66YB4srovCKsYI5opqXWyUp919"
+          value: "44wNYrLa3q8UBKVrw8Jdfoh9JmPB3fX5HRO7I0OU"
         - name: KAFKA_PORT
           value: "9092"
         - name: MYSQL_HOST

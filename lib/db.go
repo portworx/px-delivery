@@ -17,6 +17,9 @@ var (
 	client        *mongo.Client
 	certString    string = ""
 	clientError   error
+	mongoUser     string = "porxie"
+	mongoPass     string = "porxie"
+	mongoDBName   string = "delivery"
 	mongoInitUser string = os.Getenv(("MONGO_INIT_USER"))
 	mongoInitPass string = os.Getenv(("MONGO_INIT_PASS"))
 )
@@ -32,30 +35,58 @@ func getMongoClient(mongoHost string, mongoUser string, mongoPass string, mongoT
 	fmt.Println("Connection String is: " + "mongodb://" + mongoUser + ":" + mongoPass + "@" + mongoHost + ":27017" + certString)
 
 	client, err := mongo.Connect(context.TODO(), clientOptions)
-	fmt.Println(nil)
 	if err != nil {
-		fmt.Println(("No DB found, Initializing MongoDB"))
-		//InitMongoDB(mongoInitUser, mongoInitPass)
+		log.Fatal(err)
 	}
 	return client, clientError
 }
 
-func MongoCheck(mongoHost string, mongoUser string, mongoPass string, mongoTLS string) {
+func DbCheck() {
+	//Check to see if MongoDB database is ready, if not create one.
+	fmt.Println("Checking Mongo Database")
+	mongoCheck, err := mongoCheck(mongoHost, mongoInitUser, mongoInitPass, mongoTLS)
+	if err != nil {
+		fmt.Println("The Mongo Host was unreachable.")
+		log.Fatal(err)
+	} else if !mongoCheck {
+		fmt.Println("Mongo Host Reachable")
+		fmt.Println("Initializing Datbase : " + mongoDBName)
+		createMongoUser(mongoHost, mongoInitUser, mongoInitPass, mongoUser, mongoPass)
+	}
+
+	//check to see if MySQL is ready
+	fmt.Println("Checking MySQL Database")
+	mysqlCheck(mysqlHost, mysqlUser, mysqlPass, mysqlPort)
+}
+
+func mongoCheck(mongoHost string, mongoInitUser string, mongoInitPass string, mongoTLS string) (bool, error) {
 	fmt.Println("Started MongoCheck")
-	client, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
+	client, err := getMongoClient(mongoHost, mongoInitUser, mongoInitPass, mongoTLS)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		InitMongoDB(mongoInitUser, mongoInitPass, mongoUser, mongoPass)
-		//log.Fatal(err)
+		return false, err
 	}
 	fmt.Println("Connected to MongoDB!")
+
+	dbList, err := client.ListDatabaseNames(context.TODO(), bson.M{})
+	if err != nil {
+		return false, err
+	}
+
+	for _, dbName := range dbList {
+		if dbName == mongoDBName {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
 
-func MysqlCheck(mysqlHost string, mysqlUser string, mysqlPass string, mysqlPort string) {
+func mysqlCheck(mysqlHost string, mysqlUser string, mysqlPass string, mysqlPort string) {
 	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
 	_, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -71,11 +102,19 @@ func disconnect(client *mongo.Client) {
 	}
 }
 
-func createMongoUser(client *mongo.Client, user, password string) {
-	log.Printf("Creating user %s.", user)
+func createMongoUser(mongoHost string, mongoInitUser string, mongoInitPass string, mongoUser string, mongoPass string) {
+	log.Printf("Creating user %s.", mongoUser)
+	client, err := getMongoClient(mongoHost, mongoInitUser, mongoInitPass, mongoTLS)
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		fmt.Println("COULD NOT CREATE MONGO USER " + mongoUser)
+		return
+	}
+	defer func() { disconnect(client) }()
+
 	createUserCmd := bson.D{
-		{"createUser", user},
-		{"pwd", password},
+		{"createUser", mongoUser},
+		{"pwd", mongoPass},
 		{"roles", bson.A{
 			bson.D{{"role", "dbAdminAnyDatabase"}, {"db", "admin"}},
 			bson.D{{"role", "readWriteAnyDatabase"}, {"db", "admin"}},
@@ -84,39 +123,4 @@ func createMongoUser(client *mongo.Client, user, password string) {
 	if err := client.Database("admin").RunCommand(context.TODO(), createUserCmd).Err(); err != nil {
 		fmt.Println(err)
 	}
-}
-
-func createMongoDatabase(client *mongo.Client, dbName string) *mongo.Database {
-	log.Printf("Creating database %s.", dbName)
-
-	return client.Database(dbName)
-}
-
-func InitMongoDB(mongoInitUser string, mongoInitPass string, mongoUser string, mongoPass string) {
-	// By default, the PDS user only has permission to create other users, not read/write to any databases.
-	// So must create a new user for this loadtest.
-	client, err := getMongoClient(mongoHost, mongoInitUser, mongoInitPass, mongoTLS)
-	err = client.Ping(context.TODO(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func() { disconnect(client) }()
-
-	fmt.Println("### Calling CreateMongoUser ###")
-	fmt.Println("MONGO USER IS : " + mongoUser)
-	fmt.Println("MONGO USER IS : " + mongoPass)
-	createMongoUser(client, mongoUser, mongoPass)
-
-	// Connect again with the mongoUser user, so we can read and write.
-	pxclient, err := getMongoClient(mongoHost, mongoUser, mongoPass, mongoTLS)
-	err = pxclient.Ping(context.TODO(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func() { disconnect(pxclient) }()
-
-	//create database for px-delivery
-	dbName := "pxdelivery"
-	fmt.Println("### Calling CreateMongoDatabase ###")
-	createMongoDatabase(pxclient, dbName)
 }
