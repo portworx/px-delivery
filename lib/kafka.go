@@ -36,6 +36,7 @@ type config struct {
 
 func KafkaInit() {
 	// Read config.
+	fmt.Println("Checking Kafka Broker")
 	cfg := config{}
 	if err := env.Parse(&cfg); err != nil {
 		log.Fatalf("ERROR: failed to parse config: %v\n", err)
@@ -66,7 +67,7 @@ func connectToController(dialer *kafka.Dialer, url string) (*kafka.Conn, *kafka.
 	ctx := context.Background()
 
 	// Connecting to broker url.
-	log.Printf("Connecting to %s\n", url)
+	//log.Printf("Connecting to %s\n", url)
 	conn, err := dialer.DialContext(ctx, networkTCP, url)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to open a connection: %s", err)
@@ -78,7 +79,7 @@ func connectToController(dialer *kafka.Dialer, url string) (*kafka.Conn, *kafka.
 		return conn, nil, fmt.Errorf("failed to get the current controller: %s", err)
 	}
 	controllerUrl := net.JoinHostPort(controller.Host, strconv.Itoa(controller.Port))
-	log.Printf("Connecting to controller %s\n", controllerUrl)
+	//log.Printf("Connecting to controller %s\n", controllerUrl)
 	controllerConn, err := dialer.DialContext(ctx, networkTCP, controllerUrl)
 	if err != nil {
 		return conn, nil, fmt.Errorf("failed to open a connection to the controller: %s", err)

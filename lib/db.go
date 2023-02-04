@@ -92,7 +92,7 @@ func DbCheck() {
 }
 
 func mongoCheck(mongoHost string, mongoInitUser string, mongoInitPass string, mongoTLS string) (bool, error) {
-	fmt.Println("Started MongoCheck")
+	//fmt.Println("Started MongoCheck")
 	client, err := getMongoClient(mongoHost, mongoInitUser, mongoInitPass, mongoTLS)
 	if err != nil {
 		log.Fatal(err)
