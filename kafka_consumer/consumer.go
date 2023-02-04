@@ -193,8 +193,7 @@ func main() {
 			fmt.Println("Some error occured", err)
 			continue
 		}
-		//Print all Messages retrieved - for testing
-		//fmt.Println("message is : ", string(msg.Value))
+
 		order := msg.Value
 
 		//convert kafka messages to Struct
@@ -203,7 +202,7 @@ func main() {
 		if err != nil {
 			log.Fatal("Error during Unmarshal(): ", err)
 		}
-		//Push data to postgresql
+
 		//print struct values
 		println("email is : " + payload.Email)
 

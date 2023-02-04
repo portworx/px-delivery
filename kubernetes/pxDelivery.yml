@@ -21,25 +21,25 @@ spec:
         - name: MONGO_INIT_USER
           value: "pds"
         - name: MONGO_INIT_PASS
-          value: "R7GPT5d1Eh519g9ujbPrjFQti3lEU3TewACCsF8Z"
+          value: "On00tFiQ7Zm92Lckxt00G3csO5pA1rhKPGEheuHX"
         - name: MONGO_HOST
-          value: "mdb-mongo2-mwzsdi-px-delivery-0-vip"
+          value: "mdb-mongo-0pqorx-px-delivery-0-vip"
         - name: MONGO_PORT
           value: "27017"
         - name: MONGO_TLS
           value: "" # Should be empty set unless using AWS DocumentDB
         - name: KAFKA_HOST
-          value: "kf-kafka-nh8epu-px-delivery-0-vip"
+          value: "10.100.247.166"
         - name: KAFKA_USER
           value: pds
         - name: KAFKA_PASS
-          value: "44wNYrLa3q8UBKVrw8Jdfoh9JmPB3fX5HRO7I0OU"
+          value: "Ix9Nlx008ss0WwCHmda74cmoBssQ3sbjq1mKn4to"
         - name: KAFKA_PORT
           value: "9092"
         - name: MYSQL_HOST
-          value: "mysql"
+          value: "my-mysql-77vn9m-px-delivery-0-vip"
         - name: MYSQL_USER
-          value: "root"
+          value: "porxie"
         - name: MYSQL_PASS
           value: "porxie"
         - name: MYSQL_PORT

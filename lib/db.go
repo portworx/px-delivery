@@ -11,6 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	//"github.com/confluentinc/confluent-kafka-go/kafka"
+	//"github.com/segmentio/kafka-go"
 )
 
 var (
@@ -22,7 +24,28 @@ var (
 	mongoDBName   string = "delivery"
 	mongoInitUser string = os.Getenv(("MONGO_INIT_USER"))
 	mongoInitPass string = os.Getenv(("MONGO_INIT_PASS"))
+	kafkaHost     string = os.Getenv("KAFKA_HOST")
+	kafkaPort     string = os.Getenv("KAFKA_PORT")
+	kafkaUser     string = os.Getenv("KAFKA_USER")
+	kafkaPass     string = os.Getenv("KAFKA_PASS")
 )
+
+type PxOrder struct {
+	OrderId     int    `bson:"orderid,omitempty"`
+	Email       string `bson:"email,omitempty"`
+	Main        string `bson:"main,omitempty"`
+	Side1       string `bson:"side1,omitempty"`
+	Side2       string `bson:"side2,omitempty"`
+	Drink       string `bson:"drink,omitempty"`
+	Restaurant  string `bson:"restaurant,omitempty"`
+	Date        string `bson:"date,omitempty"`
+	Street1     string `bson:"street1,omitempty"`
+	Street2     string `bson:"street2,omitempty"`
+	City        string `bson:"city,omitempty"`
+	State       string `bson:"state,omitempty"`
+	Zip         string `bson:"zip,omitempty"`
+	OrderStatus string `bson:"orderstatus,omitempty"`
+}
 
 func getMongoClient(mongoHost string, mongoUser string, mongoPass string, mongoTLS string) (*mongo.Client, error) {
 
@@ -50,13 +73,22 @@ func DbCheck() {
 		log.Fatal(err)
 	} else if !mongoCheck {
 		fmt.Println("Mongo Host Reachable")
-		fmt.Println("Initializing Datbase : " + mongoDBName)
+		fmt.Println("Initializing Database : " + mongoDBName)
 		createMongoUser(mongoHost, mongoInitUser, mongoInitPass, mongoUser, mongoPass)
 	}
 
 	//check to see if MySQL is ready
 	fmt.Println("Checking MySQL Database")
 	mysqlCheck(mysqlHost, mysqlUser, mysqlPass, mysqlPort)
+
+	//Initialize Kafka
+	KafkaInit()
+
+	//create KAFKA Topic
+	//brokers := kafkaHost + ":" + kafkaPort
+	//if err := createTopic(brokers, "order", kafkaUser, kafkaPass); err != nil {
+	//	fmt.Printf("Failed to create topic: %v\n", err)
+	//}
 }
 
 func mongoCheck(mongoHost string, mongoInitUser string, mongoInitPass string, mongoTLS string) (bool, error) {
@@ -124,3 +156,47 @@ func createMongoUser(mongoHost string, mongoInitUser string, mongoInitPass strin
 		fmt.Println(err)
 	}
 }
+
+//func createTopic(brokers, topic, username, password string) error {
+//	// Create a new Kafka config object
+//	config := &kafka.ConfigMap{
+//		"bootstrap.servers": brokers,
+//		"security.protocol": "sasl_plaintext",
+//		"sasl.mechanisms":   "PLAIN",
+//		"sasl.username":     kafkaUser,
+//		"sasl.password":     kafkaPass,
+//	}
+//
+//	fmt.Println("brokers are : " + brokers)
+//	// Create a new Kafka admin client
+//	admin, err := kafka.NewAdminClient(config)
+//	if err != nil {
+//		fmt.Println(err)
+//		return fmt.Errorf("failed to create admin client: %v", err)
+//	}
+//	defer admin.Close()
+//
+//	fmt.Println("Topic name is : " + topic)
+//
+//	// Create the "order" topic if it doesn't exist
+//	results, err := admin.CreateTopics(
+//		context.TODO(),
+//		[]kafka.TopicSpecification{{
+//			Topic:             topic,
+//			NumPartitions:     1,
+//			ReplicationFactor: 1,
+//			Config:            map[string]string{},
+//		}},
+//		kafka.SetAdminOperationTimeout(5*1000),
+//	)
+//	if err != nil {
+//		return fmt.Errorf("failed to create topics: %v", err)
+//	}
+//
+//	if results[0].Error.Code() != kafka.ErrNoError {
+//		return fmt.Errorf("failed to create topic: %v", results[0].Error)
+//	}
+//
+//	fmt.Println("Kafka Topic Created")
+//	return nil
+//}

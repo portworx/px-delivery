@@ -2,7 +2,6 @@ package lib
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -11,30 +10,15 @@ import (
 	"os"
 	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
-	kafkaHost string = os.Getenv("KAFKA_HOST")
-	kafkaPort string = os.Getenv("KAFKA_PORT")
-	kafkaUser string = os.Getenv("KAFKA_USER")
-	kafkaPass string = os.Getenv("KAFKA_PASS")
 	mysqlHost string = os.Getenv("MYSQL_HOST")
 	mysqlUser string = os.Getenv("MYSQL_USER")
 	mysqlPass string = os.Getenv("MYSQL_PASS")
 	mysqlPort string = os.Getenv("MYSQL_PORT")
 )
-
-type Order struct {
-	OrderId     int    `bson:"orderid,omitempty"`
-	Email       string `bson:"email,omitempty"`
-	Main        string `bson:"main,omitempty"`
-	Side1       string `bson:"side1,omitempty"`
-	Side2       string `bson:"side2,omitempty"`
-	Drink       string `bson:"drink,omitempty"`
-	OrderStatus string `bson:"orderstatus,omitempty"`
-}
 
 type PastOrders struct {
 	OrderId    int
@@ -44,23 +28,6 @@ type PastOrders struct {
 	Drink      string
 	Restaurant string
 	Date       string
-}
-
-type PxOrder struct {
-	OrderId     int    `bson:"orderid,omitempty"`
-	Email       string `bson:"email,omitempty"`
-	Main        string `bson:"main,omitempty"`
-	Side1       string `bson:"side1,omitempty"`
-	Side2       string `bson:"side2,omitempty"`
-	Drink       string `bson:"drink,omitempty"`
-	Restaurant  string `bson:"restaurant,omitempty"`
-	Date        string `bson:"date,omitempty"`
-	Street1     string `bson:"street1,omitempty"`
-	Street2     string `bson:"street2,omitempty"`
-	City        string `bson:"city,omitempty"`
-	State       string `bson:"state,omitempty"`
-	Zip         string `bson:"zip,omitempty"`
-	OrderStatus string `bson:"orderstatus,omitempty"`
 }
 
 type myOrderData struct {
@@ -162,7 +129,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Organize form submission data for a write to storage
-		currentTime := time.Now() //used in the order submission
+		//currentTime := time.Now() //used in the order submission
 		email := session.Values["email"].(string)
 		main := r.FormValue("main")
 		side1 := r.FormValue("side1")
@@ -177,7 +144,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		city := myAddress.City
 		state := myAddress.State
 		zipcode := myAddress.Zipcode
-		orderDate := currentTime.Format("2 January 2006")
+		//orderDate := currentTime.Format("2 January 2006")
 
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
@@ -195,7 +162,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
+		//SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
@@ -231,7 +198,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Organize form submission data for a write to storage
-		currentTime := time.Now() //used in the order submission
+		//currentTime := time.Now() //used in the order submission
 		email := session.Values["email"].(string)
 		main := r.FormValue("main")
 		side1 := r.FormValue("side1")
@@ -246,7 +213,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		city := myAddress.City
 		state := myAddress.State
 		zipcode := myAddress.Zipcode
-		orderDate := currentTime.Format("2 January 2006")
+		//orderDate := currentTime.Format("2 January 2006")
 
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
@@ -264,7 +231,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
+		//SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
@@ -300,7 +267,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Organize form submission data for a write to storage
-		currentTime := time.Now() //used in the order submission
+		//currentTime := time.Now() //used in the order submission
 		email := session.Values["email"].(string)
 		main := r.FormValue("main")
 		side1 := r.FormValue("side1")
@@ -315,7 +282,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		city := myAddress.City
 		state := myAddress.State
 		zipcode := myAddress.Zipcode
-		orderDate := currentTime.Format("2 January 2006")
+		//orderDate := currentTime.Format("2 January 2006")
 
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
@@ -333,86 +300,11 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
+		//SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
 	}
-}
-
-func SubmitOrder(orderNum int, orderDate string, email string, restaurant string, main string, side1 string, side2 string, drink string, street1 string, street2 string, city string, state string, zipcode string) {
-
-	//FOR TROUBLESHOOTING INPUT VALIDATION
-	//fmt.Println("I'm begging the Submit Order Function Now - Trying to Submit to Kafka")
-	//fmt.Println("#########")
-	//fmt.Println("email is : " + email)
-	//fmt.Println("restaurant is : " + restaurant)
-	//fmt.Println("main is : " + main)
-	//fmt.Println("side1 is : " + side1)
-	//fmt.Println("side2 is : " + side2)
-	//fmt.Println("drink is : " + drink)
-	//fmt.Println("#########")
-
-	//create a kafka producer - connection variables come from environment variables KAFKA_HOST and KAFKA_PORT
-	config := &kafka.ConfigMap{
-		"bootstrap.servers": kafkaHost + ":" + kafkaPort,
-		"sasl.username":     kafkaUser,
-		"sasl.password":     kafkaPass,
-		"security.protocol": "SASL_PLAINTEXT",
-		"sasl.mechanisms":   "PLAIN",
-	}
-
-	p, err := kafka.NewProducer(config)
-	if err != nil {
-		fmt.Printf("Failed to create producer: %s\n", err)
-	}
-
-	//configure a kafka delivery channel
-	deliveryChan := make(chan kafka.Event)
-
-	// Produce messages to topic (asynchronously)
-	topic := "order"
-	msg := PxOrder{
-		Email:       email,
-		OrderId:     orderNum,
-		Restaurant:  restaurant,
-		Main:        main,
-		Side1:       side1,
-		Side2:       side2,
-		Drink:       drink,
-		Date:        orderDate,
-		Street1:     street1,
-		Street2:     street2,
-		City:        city,
-		State:       state,
-		Zip:         zipcode,
-		OrderStatus: "Pending",
-	}
-
-	//convert msg to a json object and store it in payload
-	payload, err := json.Marshal(msg)
-
-	//push msg to the kafka queue
-	err = p.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-		Value:          payload,
-		Headers:        []kafka.Header{{Key: "PX-Delivery", Value: []byte("header values are binary")}},
-	}, deliveryChan)
-	if err != nil {
-		fmt.Printf("Produce failed: %v\n", err)
-	}
-
-	e := <-deliveryChan
-	m := e.(*kafka.Message)
-
-	if m.TopicPartition.Error != nil {
-		fmt.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
-	} else {
-		fmt.Printf("Delivered message to topic %s [%d] at offset %v\n",
-			*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
-	}
-
-	close(deliveryChan)
 }
 
 func MyOrderHistory(email string) []PastOrders {

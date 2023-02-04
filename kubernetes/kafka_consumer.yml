@@ -19,19 +19,19 @@ spec:
         image: eshanks16/kafka_consumer:v1
         env:
           - name: KAFKA_HOST
-            value: kf-kafka-nh8epu-px-delivery-0-vip
+            value: "kf-kafka-y01har-px-delivery-0-vip"
           - name: KAFKA_USER
             value: pds
           - name: KAFKA_PASS
-            value: "44wNYrLa3q8UBKVrw8Jdfoh9JmPB3fX5HRO7I0OU"
+            value: "Ix9Nlx008ss0WwCHmda74cmoBssQ3sbjq1mKn4to"
           - name: KAFKA_PORT
             value: "9092"
           - name: MYSQL_HOST
-            value: "my-mysql2-qllacl-px-delivery-0-vip"
+            value: "my-mysql-77vn9m-px-delivery-0-vip"
           - name: MYSQL_INIT_USER
             value: "pds"
           - name: MYSQL_INIT_PASS
-            value: "3UiaSl18VyuBS9t1doK5kTbA50Z9jRvvrgs6YRyB"
+            value: "nS2favlCUT2J02PIEatQ3fPiO3mIy41gaE9zap4j"
           - name: MYSQL_USER
             value: "porxie"
           - name: MYSQL_PASS
