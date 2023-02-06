@@ -290,10 +290,11 @@ func SubmitOrder(orderNum int, orderDate string, email string, restaurant string
 	// create a new writer that writes to the topic "order" on localhost:9092
 	brokerURL := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
 	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers:  []string{brokerURL},
-		Topic:    "order",
-		Balancer: &kafka.LeastBytes{},
-		Dialer:   dialer,
+		Brokers:      []string{brokerURL},
+		Topic:        "order",
+		Balancer:     &kafka.LeastBytes{},
+		Dialer:       dialer,
+		RequiredAcks: 1,
 	})
 
 	// marshal the payload into json
@@ -303,15 +304,6 @@ func SubmitOrder(orderNum int, orderDate string, email string, restaurant string
 	}
 
 	// write the message to the topic
-	err = w.WriteMessages(context.Background(),
-		kafka.Message{
-			Value: payload,
-		},
-	)
-	if err != nil {
-		log.Fatalf("Failed to write message: %v", err)
-	}
-
 	err = w.WriteMessages(context.Background(),
 		kafka.Message{
 			Value: payload,
