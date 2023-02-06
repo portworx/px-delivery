@@ -29,11 +29,11 @@ spec:
         - name: MONGO_TLS
           value: "" # Should be empty set unless using AWS DocumentDB
         - name: KAFKA_HOST
-          value: "10.100.247.166"
+          value: "kf-kafka-v2lgtm-px-delivery-0-vip.mktg-prod.pds-dns.io"
         - name: KAFKA_USER
-          value: pds
+          value: "pds"
         - name: KAFKA_PASS
-          value: "Ix9Nlx008ss0WwCHmda74cmoBssQ3sbjq1mKn4to"
+          value: "E14zS9rk6bRBsuKj8VeNIX05qge91XZ4AytQzPww"
         - name: KAFKA_PORT
           value: "9092"
         - name: MYSQL_HOST

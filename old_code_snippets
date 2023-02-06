@@ -1,0 +1,51 @@
+
+### SUBMIT ORDER CODE USED WHEN ASKING FOR HELP IN SLACK ###
+#########################
+
+func SubmitOrder(orderNum int, orderDate string, email string, restaurant string, main string, side1 string, side2 string, drink string, street1 string, street2 string, city string, state string, zipcode string) {
+
+	cfg := config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatalf("ERROR: failed to parse config: %v\n", err)
+	}
+	fmt.Println("cfg.host is : " + cfg.Host)
+	fmt.Println("kafkaHost is : " + kafkaHost)
+
+	brokerURL := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+	fmt.Println("Broker URL is : " + brokerURL)
+	dialer := &kafka.Dialer{
+		SASLMechanism: plainMechanism(cfg.User, cfg.Password),
+		Timeout:       10 * time.Second,
+		DualStack:     true,
+	}
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+
+	msg := PxOrder{
+		Email:       email,
+		OrderId:     orderNum,
+		Restaurant:  restaurant,
+		Main:        main,
+		Side1:       side1,
+		Side2:       side2,
+		Drink:       drink,
+		Date:        orderDate,
+		Street1:     street1,
+		Street2:     street2,
+		City:        city,
+		State:       state,
+		Zip:         zipcode,
+		OrderStatus: "Pending",
+	}
+
+	err := writeMessages(dialer, brokerURL, topicName, msg)
+
+	log.Printf("ERROR: %v\n", err)
+
+}
+
+
+
+##### END
+#########################

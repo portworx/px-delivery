@@ -2,6 +2,7 @@ package lib
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -24,14 +25,27 @@ const (
 )
 
 type config struct {
-	User        string        `env:"KAFKA_USER" envDefault:"pds"`
-	Password    string        `env:"KAFKA_PASS,required"`
-	Host        string        `env:"KAKFA_HOST,required"`
-	Port        string        `env:"PORT" envDefault:"9092"`
-	Count       int           `env:"COUNT" envDefault:"100"`
-	SleepTime   time.Duration `env:"SLEEP_TIME" envDefault:"5s"`
-	Iterations  int           `env:"ITERATIONS" envDefault:"0"`
-	FailOnError bool          `env:"FAIL_ON_ERROR" envDefault:"false"`
+	User     string `env:"KAFKA_USER" envDefault:"pds"`
+	Password string `env:"KAFKA_PASS,required"`
+	Host     string `env:"KAFKA_HOST,required"`
+	Port     string `env:"KAFKA_PORT" envDefault:"9092"`
+}
+
+type PxOrder struct {
+	OrderId     int    `bson:"orderid,omitempty"`
+	Email       string `bson:"email,omitempty"`
+	Main        string `bson:"main,omitempty"`
+	Side1       string `bson:"side1,omitempty"`
+	Side2       string `bson:"side2,omitempty"`
+	Drink       string `bson:"drink,omitempty"`
+	Restaurant  string `bson:"restaurant,omitempty"`
+	Date        string `bson:"date,omitempty"`
+	Street1     string `bson:"street1,omitempty"`
+	Street2     string `bson:"street2,omitempty"`
+	City        string `bson:"city,omitempty"`
+	State       string `bson:"state,omitempty"`
+	Zip         string `bson:"zip,omitempty"`
+	OrderStatus string `bson:"orderstatus,omitempty"`
 }
 
 func KafkaInit() {
@@ -43,6 +57,9 @@ func KafkaInit() {
 	}
 
 	brokerURL := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+	fmt.Println("Broker URL is : " + brokerURL)
+	fmt.Println("Host is : " + cfg.Host)
+	fmt.Println("Port is : " + cfg.Port)
 	dialer := &kafka.Dialer{
 		SASLMechanism: plainMechanism(cfg.User, cfg.Password),
 		Timeout:       10 * time.Second,
@@ -52,6 +69,7 @@ func KafkaInit() {
 	// Create topic.
 	err := createTopic(dialer, brokerURL, topicName)
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 
@@ -60,7 +78,6 @@ func KafkaInit() {
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
-
 }
 
 func connectToController(dialer *kafka.Dialer, url string) (*kafka.Conn, *kafka.Conn, error) {
@@ -105,7 +122,7 @@ func createTopic(dialer *kafka.Dialer, brokerURL, topicName string) error {
 	err = controllerConn.CreateTopics(kafka.TopicConfig{
 		Topic:             topicName,
 		NumPartitions:     1,
-		ReplicationFactor: 1,
+		ReplicationFactor: 3,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create the %s topic: %s", topicName, err)
@@ -137,37 +154,53 @@ func deleteTopic(dialer *kafka.Dialer, brokerURL, topicName string) error {
 	return nil
 }
 
-func writeMessages(dialer *kafka.Dialer, url string, topic string, count int) error {
+func writeMessages(dialer *kafka.Dialer, url string, topic string, msg PxOrder) error {
+
+	conn, controllerConn, err := connectToController(dialer, url)
+	if conn != nil {
+		defer conn.Close()
+	}
+	if controllerConn != nil {
+		defer controllerConn.Close()
+	}
+	if err != nil {
+		return err
+	}
+
 	// Find leader node for topic.
 	ctx := context.Background()
 	leader, err := dialer.LookupLeader(ctx, networkTCP, url, topic, partition)
+	//leader := kafkaHost + ":" + kafkaPort
 	if err != nil {
 		return fmt.Errorf("failed to find leader for topic %s: %v", topic, err)
 	}
 	leaderURL := net.JoinHostPort(leader.Host, strconv.Itoa(leader.Port))
 
-	log.Printf("write messages (%s)\n", leaderURL)
+	//log.Printf("write messages (%s)\n", leader)
+
 	w := newWriter(leaderURL, topic, dialer)
+
+	fmt.Println("topic is : " + w.Topic)
 	defer w.Close()
-	start := time.Now()
-	for i := 0; i < count; i++ {
-		key := fmt.Sprintf("key%d-%d", time.Now().Nanosecond(), i)
-		err := w.WriteMessages(ctx, kafka.Message{
-			Key:   []byte(key),
-			Value: []byte("this is message" + key),
-		})
-		if err != nil {
-			if writeErr, ok := err.(kafka.WriteErrors); ok {
-				for _, werr := range writeErr {
-					log.Printf("ERROR: write #%d failed: %v\n", i, werr)
-				}
-			}
-			return fmt.Errorf("write failed: %v", err)
-		}
+
+	//convert msg to a json object and store it in payload
+	//payload, err := json.Marshal(msg)
+	//if err != nil {
+	//	fmt.Println("Failed to Marshal json")
+	//}
+
+	key := fmt.Sprintf("key%d", time.Now().Nanosecond())
+	message := kafka.Message{
+		Key:   []byte(key),
+		Value: []byte("this is message" + key), //TEST DATA THIS SHOULD BE THE MSG JSON WHEN DONE
 	}
-	stop := time.Now()
-	log.Printf("%d writes done in %v\n", count, stop.Sub(start))
-	return nil
+
+	err = w.WriteMessages(ctx, message)
+	if err != nil {
+		return fmt.Errorf("write failed: %v", err)
+	}
+
+	return err
 }
 
 func readMessages(dialer *kafka.Dialer, url, topic string, count int) error {
@@ -204,7 +237,7 @@ func plainMechanism(user, password string) sasl.Mechanism {
 func newWriter(url string, topic string, dialer *kafka.Dialer) *kafka.Writer {
 	return &kafka.Writer{
 		Addr:     kafka.TCP(url),
-		Topic:    topic,
+		Topic:    "order",
 		Balancer: &kafka.Hash{},
 		Transport: &kafka.Transport{
 			SASL: dialer.SASLMechanism,
@@ -222,6 +255,72 @@ func newReader(url string, topic string, partition int, dialer *kafka.Dialer) *k
 	})
 }
 
-func getTopicName() string {
-	return fmt.Sprintf("loadtest%d", time.Now().Nanosecond())
+func SubmitOrder(orderNum int, orderDate string, email string, restaurant string, main string, side1 string, side2 string, drink string, street1 string, street2 string, city string, state string, zipcode string) {
+
+	cfg := config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatalf("ERROR: failed to parse config: %v\n", err)
+	}
+	fmt.Println("cfg.host is : " + cfg.Host)
+	fmt.Println("kafkaHost is : " + kafkaHost)
+
+	msg := PxOrder{
+		Email:       email,
+		OrderId:     orderNum,
+		Restaurant:  restaurant,
+		Main:        main,
+		Side1:       side1,
+		Side2:       side2,
+		Drink:       drink,
+		Date:        orderDate,
+		Street1:     street1,
+		Street2:     street2,
+		City:        city,
+		State:       state,
+		Zip:         zipcode,
+		OrderStatus: "Pending",
+	}
+
+	dialer := &kafka.Dialer{
+		SASLMechanism: plainMechanism(cfg.User, cfg.Password),
+		Timeout:       10 * time.Second,
+		DualStack:     true,
+	}
+
+	// create a new writer that writes to the topic "order" on localhost:9092
+	brokerURL := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+	w := kafka.NewWriter(kafka.WriterConfig{
+		Brokers:  []string{brokerURL},
+		Topic:    "order",
+		Balancer: &kafka.LeastBytes{},
+		Dialer:   dialer,
+	})
+
+	// marshal the payload into json
+	payload, err := json.Marshal(msg)
+	if err != nil {
+		log.Fatalf("Failed to marshal payload: %v", err)
+	}
+
+	// write the message to the topic
+	err = w.WriteMessages(context.Background(),
+		kafka.Message{
+			Value: payload,
+		},
+	)
+	if err != nil {
+		log.Fatalf("Failed to write message: %v", err)
+	}
+
+	err = w.WriteMessages(context.Background(),
+		kafka.Message{
+			Value: payload,
+		},
+	)
+	if err != nil {
+		log.Fatalf("Failed to write message: %v", err)
+	}
+
+	w.Close()
+
 }

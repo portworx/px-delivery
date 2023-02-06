@@ -129,7 +129,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Organize form submission data for a write to storage
-		//currentTime := time.Now() //used in the order submission
+		currentTime := time.Now() //used in the order submission
 		email := session.Values["email"].(string)
 		main := r.FormValue("main")
 		side1 := r.FormValue("side1")
@@ -144,7 +144,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		city := myAddress.City
 		state := myAddress.State
 		zipcode := myAddress.Zipcode
-		//orderDate := currentTime.Format("2 January 2006")
+		orderDate := currentTime.Format("2 January 2006")
 
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
@@ -162,7 +162,7 @@ func PxbbqOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		//SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
+		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
@@ -198,7 +198,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Organize form submission data for a write to storage
-		//currentTime := time.Now() //used in the order submission
+		currentTime := time.Now() //used in the order submission
 		email := session.Values["email"].(string)
 		main := r.FormValue("main")
 		side1 := r.FormValue("side1")
@@ -213,7 +213,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		city := myAddress.City
 		state := myAddress.State
 		zipcode := myAddress.Zipcode
-		//orderDate := currentTime.Format("2 January 2006")
+		orderDate := currentTime.Format("2 January 2006")
 
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
@@ -231,7 +231,7 @@ func McdOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		//SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
+		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
@@ -267,7 +267,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Organize form submission data for a write to storage
-		//currentTime := time.Now() //used in the order submission
+		currentTime := time.Now() //used in the order submission
 		email := session.Values["email"].(string)
 		main := r.FormValue("main")
 		side1 := r.FormValue("side1")
@@ -282,7 +282,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		city := myAddress.City
 		state := myAddress.State
 		zipcode := myAddress.Zipcode
-		//orderDate := currentTime.Format("2 January 2006")
+		orderDate := currentTime.Format("2 January 2006")
 
 		//log order to std out - Can be used for troubleshooting
 		fmt.Printf("Order submitted by: ")
@@ -300,7 +300,7 @@ func CentralperkOrderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("########")
 
 		//submit order to storage
-		//SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
+		SubmitOrder(orderNum, orderDate, email, restaurant, main, side1, side2, drink, street1, street2, city, state, zipcode)
 
 		//Display Operation Status Page to User
 		orderStatus(w, r, statusData)
