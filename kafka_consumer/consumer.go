@@ -53,7 +53,7 @@ type Data struct {
 	OrderStatus string
 }
 
-func ErrorCheck(err error) {
+func errorCheck(err error) {
 	if err != nil {
 		panic(err.Error())
 	}
@@ -126,7 +126,7 @@ func writeToDB(payload Data) {
 
 	//stmt := "INSERT INTO orders(orderid, email, main, side1, side2, drink, restaurant, date, street1, street2, city, state, zipcode, orderstatus) VALUES (" + "12345" + "," + "'bart@test.com'" + "," + payload.Main + "," + payload.Side1 + "," + payload.Side2 + "," + payload.Drink + "," + payload.Restaurant + "," + payload.Date + "," + "STREET1" + "," + "STREET2" + "," + payload.City + "," + payload.State + "," + payload.Zipcode + "," + payload.OrderStatus + ")"
 	res, err := db.Exec("INSERT INTO orders(orderid, email, main, side1, side2, drink, restaurant, date, street1, street2, city, state, zipcode, orderstatus) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", payload.OrderId, payload.Email, payload.Main, payload.Side1, payload.Side2, payload.Drink, payload.Restaurant, payload.Date, payload.Street1, payload.Street2, payload.City, payload.State, payload.Zipcode, payload.OrderStatus)
-	ErrorCheck(err)
+	errorCheck(err)
 
 	if err != nil {
 		panic(err.Error())
@@ -153,7 +153,7 @@ func checkDBExists(db *sql.DB, dbName string) bool {
 	return false
 }
 
-func ConsumeOrders(dialer *kafka.Dialer) {
+func consumeOrders(dialer *kafka.Dialer) {
 	cfg := config{}
 	if err := env.Parse(&cfg); err != nil {
 		log.Fatalf("ERROR: failed to parse config: %v\n", err)
@@ -193,15 +193,14 @@ func plainMechanism(user, password string) sasl.Mechanism {
 	}
 }
 
-func main() {
-
+func dbCheck() {
 	//Check to see if the MYSQL Connection is working, if it is not, initialize our database
 	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		fmt.Println("There was an error connecting to the delivery database")
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	defer db.Close()
 
@@ -210,7 +209,11 @@ func main() {
 		//initialize mysql
 		initMySQL(mysqlInitUser, mysqlInitPass, mysqlUser, mysqlPass)
 	}
+}
 
+func main() {
+
+	//read config values
 	cfg := config{}
 	if err := env.Parse(&cfg); err != nil {
 		log.Fatalf("ERROR: failed to parse config: %v\n", err)
@@ -223,5 +226,11 @@ func main() {
 		DualStack:     true,
 	}
 
-	ConsumeOrders(dialer)
+	//Check Database Connections
+	fmt.Println("Checking the MYSQL Database Connection")
+	dbCheck()
+
+	//begin consuming kafka messages
+	consumeOrders(dialer)
+
 }
