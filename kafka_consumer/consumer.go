@@ -9,9 +9,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/caarlos0/env/v6"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/segmentio/kafka-go"
-
+	"github.com/segmentio/kafka-go/sasl"
 	"github.com/segmentio/kafka-go/sasl/plain"
 )
 
@@ -27,6 +28,13 @@ var (
 	mysqlInitUser string = os.Getenv("MYSQL_INIT_USER")
 	mysqlInitPass string = os.Getenv("MYSQL_INIT_PASS")
 )
+
+type config struct {
+	User     string `env:"KAFKA_USER" envDefault:"pds"`
+	Password string `env:"KAFKA_PASS,required"`
+	Host     string `env:"KAFKA_HOST,required"`
+	Port     string `env:"KAFKA_PORT" envDefault:"9092"`
+}
 
 type Data struct {
 	OrderId     int
@@ -92,7 +100,7 @@ func initMySQL(mysqlInitUser string, mysqlInitPass string, mysqlUser string, mys
 func writeToDB(payload Data) {
 
 	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
-	fmt.Println("DSN is : " + dsn)
+
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err.Error())
@@ -143,14 +151,53 @@ func checkDBExists(db *sql.DB, dbName string) bool {
 	}
 	defer rows.Close()
 	return false
+}
 
+func ConsumeOrders(dialer *kafka.Dialer) {
+	cfg := config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatalf("ERROR: failed to parse config: %v\n", err)
+	}
+	brokerURL := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers:   []string{brokerURL},
+		Topic:     "order",
+		Partition: 0,
+		MinBytes:  10e3, // 10KB
+		MaxBytes:  10e6, // 10MB
+		Dialer:    dialer,
+	})
+	defer r.Close()
+
+	for {
+		m, err := r.ReadMessage(context.Background())
+		if err != nil {
+			log.Fatalf("Failed to read message: %v", err)
+		}
+
+		var order Data
+		err = json.Unmarshal(m.Value, &order)
+		if err != nil {
+			log.Fatalf("Failed to unmarshal message value: %v", err)
+		}
+
+		writeToDB(order)
+		fmt.Printf("Consumed order: %+v\n", order.OrderId)
+	}
+}
+
+func plainMechanism(user, password string) sasl.Mechanism {
+	return plain.Mechanism{
+		Username: user,
+		Password: password,
+	}
 }
 
 func main() {
 
 	//Check to see if the MYSQL Connection is working, if it is not, initialize our database
 	dsn := mysqlUser + ":" + mysqlPass + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/delivery"
-	fmt.Println("Testing DSN : " + dsn)
+
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		fmt.Println("There was an error connecting to the delivery database")
@@ -164,51 +211,17 @@ func main() {
 		initMySQL(mysqlInitUser, mysqlInitPass, mysqlUser, mysqlPass)
 	}
 
-	//begin Kafka Reading
-	mechanism := plain.Mechanism{
-		Username: kafkaUser,
-		Password: kafkaPass,
+	cfg := config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatalf("ERROR: failed to parse config: %v\n", err)
 	}
+	fmt.Println("cfg.host is : " + cfg.Host)
 
 	dialer := &kafka.Dialer{
+		SASLMechanism: plainMechanism(cfg.User, cfg.Password),
 		Timeout:       10 * time.Second,
 		DualStack:     true,
-		SASLMechanism: mechanism,
 	}
 
-	conf := kafka.ReaderConfig{
-		Brokers:  []string{kafkaHost + ":" + kafkaPort},
-		Topic:    "order",
-		GroupID:  "g1",
-		MaxBytes: 10,
-		Dialer:   dialer,
-	}
-
-	fmt.Println("### Starting the Kafka Consumer ###")
-	reader := kafka.NewReader(conf)
-
-	for {
-		msg, err := reader.ReadMessage(context.Background())
-		if err != nil {
-			fmt.Println("Some error occured", err)
-			continue
-		}
-
-		order := msg.Value
-
-		//convert kafka messages to Struct
-		var payload Data
-		err = json.Unmarshal(order, &payload)
-		if err != nil {
-			log.Fatal("Error during Unmarshal(): ", err)
-		}
-
-		//print struct values
-		println("email is : " + payload.Email)
-
-		fmt.Println("### Calling Write to DB Function ###")
-		writeToDB(payload)
-
-	}
-
+	ConsumeOrders(dialer)
 }
