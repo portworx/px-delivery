@@ -11,6 +11,7 @@ import (
 
 	"github.com/caarlos0/env/v6"
 	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl"
 	"github.com/segmentio/kafka-go/sasl/plain"
@@ -162,6 +163,7 @@ func consumeOrders(dialer *kafka.Dialer) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:   []string{brokerURL},
 		Topic:     "order",
+		GroupID:   "px-delivery",
 		Partition: 0,
 		MinBytes:  10e3, // 10KB
 		MaxBytes:  10e6, // 10MB
