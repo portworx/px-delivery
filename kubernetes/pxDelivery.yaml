@@ -19,31 +19,31 @@ spec:
         image: eshanks16/pxdelivery:v1
         env:
         - name: MONGO_INIT_USER
-          value: "pds"
+          value: "pds" #Required
         - name: MONGO_INIT_PASS
-          value: "On00tFiQ7Zm92Lckxt00G3csO5pA1rhKPGEheuHX"
+          value: "" #Required
         - name: MONGO_HOST
-          value: "mdb-mongo-0pqorx-px-delivery-0-vip"
+          value: "" #Required
         - name: MONGO_PORT
-          value: "27017"
+          value: "27017" #Required
         - name: MONGO_TLS
           value: "" # Should be empty set unless using AWS DocumentDB
         - name: KAFKA_HOST
-          value: "kf-kafka-v2lgtm-px-delivery-0-vip.mktg-prod.pds-dns.io"
+          value: "" #Required
         - name: KAFKA_USER
-          value: "pds"
+          value: "pds" #Required
         - name: KAFKA_PASS
-          value: "E14zS9rk6bRBsuKj8VeNIX05qge91XZ4AytQzPww"
+          value: "" #Required
         - name: KAFKA_PORT
-          value: "9092"
+          value: "9092" #Required
         - name: MYSQL_HOST
-          value: "my-mysql-77vn9m-px-delivery-0-vip"
+          value: "" #Required
         - name: MYSQL_USER
           value: "porxie"
         - name: MYSQL_PASS
           value: "porxie"
         - name: MYSQL_PORT
-          value: "3306"
+          value: "6446" #Required
         imagePullPolicy: Always
         ports:
           - containerPort: 8080  

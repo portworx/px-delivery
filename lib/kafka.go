@@ -262,7 +262,6 @@ func SubmitOrder(orderNum int, orderDate string, email string, restaurant string
 		log.Fatalf("ERROR: failed to parse config: %v\n", err)
 	}
 	fmt.Println("cfg.host is : " + cfg.Host)
-	fmt.Println("kafkaHost is : " + kafkaHost)
 
 	msg := PxOrder{
 		Email:       email,
