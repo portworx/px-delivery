@@ -18,11 +18,16 @@ This application consists of a web application running golang. The Authenticatio
 # Deployment Instructions
 
 
-This application requires data services to be deployed prior to deploying the application. Before deploying this application, deploy a MongoDB Database, a Kafka Queue, and a Mysql Database from Portworx Data Services. The three data services should be deployed prior to the PX-Delivery Service and the Kafka Consumer pods. The application (PX-Delivery and Kafka Consumer) have logic to initialize the mongoDB database, kafkta topic, and Mysql Database. In order for the application to create new databases, new users, new permissions, etc, the data services must be deployed first, and then the applications.
+This application requires data services to be deployed prior to deploying the application. Before deploying this application, use Portworx Data Services to deploy:
+-  a Kafka Queue with `(3 nodes minimum)`
+-  a MongoDB Database `(1 or more Nodes)`
+-  a Mysql Database `(1 or more)` 
+   
+   The three data services should be deployed prior to the PX-Delivery Service and the Kafka Consumer pods. The application (PX-Delivery and Kafka Consumer) have logic to initialize the mongoDB database, kafka topic, and Mysql Database. In order for the application to create new databases, new users, new permissions, etc, the data services must be deployed first, and then the applications.
 
 ![PX Delivery PDS Deployment Summary Screenshot](./static/px-delivery-pds.png)
 
-Use the Connection information from PDS to fill out the environment variables in the Kubernetes YAML.
+Use the Connection information from PDS to fill out the environment variables in the Kubernetes YAML. If you're unsure which endpoint to use, choose one with `VIP` in the name.
 
 ![PX Delivery PDS Connection Screenshot](./static/px-delivery-pds-conn.png)
 
@@ -30,7 +35,7 @@ Once the data services have been deployed, you can use the Kubernetes manifetsts
 
 Update the Kubernetes manifests with connection information for the `Kafka` instance, `MongoDB` database, and `MySQL` database. Specifically these environment variables:
 
-`MONGO_INIT_USER` - PDS User used to create a new database <br/>
+`MONGO_INIT_USER` - PDS User used to create a new database. Default `pds`<br/>
 `MONGO_INIT_PASS` - PDS Password for the MongoDB service <br/>
 `MONGO_HOST` - Hostname or LoadBalancer of the MongoDB database<br/>
 `MONGO_USER` - Custom Username for accessing MySQL. Default `porxie`<br/>
@@ -51,11 +56,11 @@ This will deploy:
 
 - A namespace named `px-delivery`.
   
-- - Kafka Consumer that pulls from Kafka and pushes to MySQL. 
+- Kafka Consumer that pulls from Kafka and pushes to MySQL. 
   > This part of the application initializes the MySQL database with a delivery database and the MYSQL_USER and MYSQL_PASS
 
 - Portworx Delivery App (From Dockerhub) which uses MongoDB for auth. Pushes orders to Kafka, and reads order history from MySQL.
-  > This part of the appliation initializes the MongoDB database with a delivery database and the MONGO_USER and MONGO_PASS. It also initializes the "order" topic in Kafak.
+  > This part of the appliation initializes the MongoDB database with a delivery database and the MONGO_USER and MONGO_PASS. It also initializes the "order" topic in Kafka.
 
   > If any of the databases aren't initialized, try restarting the apps to get them to initialize the database.
 
