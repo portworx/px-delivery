@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -312,14 +311,18 @@ func MyOrderHistory(email string) []PastOrders {
 	//fmt.Println("DSN is : " + dsn)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
+		fmt.Println("Could not connect to Order History Database")
+		return (nil)
 	}
 
 	defer db.Close()
 
 	rows, err := db.Query("select orderid, main, side1, side2, drink, restaurant, date from orders where email = " + "'" + email + "'")
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
+		fmt.Println("No Orders History exists for user: " + email)
+		return (nil)
 	}
 
 	defer rows.Close()
